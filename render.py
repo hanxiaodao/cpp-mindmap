@@ -166,6 +166,11 @@ def main():
     sub_stat = ''
     if subtitle:
         sub_stat = f'<div class="header-divider"></div><div class="header-stat"><strong>{inline(subtitle)}</strong></div>'
+    quiz = front.get('quiz', '')
+    if quiz:
+        sub_stat += (f'<div class="header-divider"></div><div class="header-stat">'
+                     f'<a href="{quiz}" target="_blank" rel="noopener" '
+                     f'style="text-decoration:none;color:inherit"><strong>刷题 →</strong></a></div>')
     export_name = course.replace(' ', '') + '考点笔记.md'
     out = head + (body
            .replace('@@PAGE_TITLE@@', inline(course) + ' · 考点笔记')
