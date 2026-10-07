@@ -85,7 +85,7 @@ skill 内置三个脚本：MinerU PDF 解析（parse_pdf.py）、docx 本地转�
 python <skill目录>/scripts/render_notes.py exam-notes.md      # 产出同目录 index.html
 ```
 
-渲染规则（token 替换表、内容块 → CSS 类的映射、章节配色表）写在 **assets/template.html** 文件头注释里，脚本是它的权威实现。**不要让 AI 现场手写渲染**——04737 项目里手写连续踩了 4 个坑，现已全部固化进脚本并在代码里注明原因：
+渲染规则（token 替换表、内容块 → CSS 类的映射、章节配色表）写在 **assets/template.html** 文件头注释里，脚本是它的权威实现。模板自带完整交互：折叠、主题切换、Markdown 导出、"展开全部/收起全部"工具条、整页搜索（Ctrl+K，含折叠内容与页内高亮）、回到顶部悬浮组、front matter 驱动的右上角胶囊入口。**不要让 AI 现场手写渲染**——04737 项目里手写连续踩了 4 个坑，现已全部固化进脚本并在代码里注明原因：
 
 1. 模板头部"使用说明注释"里也含 `@@TOKEN@@` 字样 → 必须只在 `-->` 之后替换，否则内容注进注释里、整文件损坏；
 2. 考点 meta 行先删后解析 → level/freq 徽章全部消失；

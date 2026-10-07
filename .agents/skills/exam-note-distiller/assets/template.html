@@ -409,8 +409,82 @@ body.no-github .export-md { right:64px; }
   body.no-github .theme-toggle { right:10px; }
   body.no-github .export-md { right:52px; }
 }
+/* ── 章节列表工具条：全部展开 / 收起 ── */
+.list-tools {
+  display:flex; justify-content:flex-end; gap:8px;
+  margin-bottom:2px;
+}
+.list-tools button {
+  display:flex; align-items:center; gap:5px;
+  height:30px; padding:0 12px;
+  border-radius:15px; border:1px solid var(--border);
+  background:var(--surface); color:var(--muted); cursor:pointer;
+  font-size:12.5px; font-family:inherit;
+  transition:color .15s, border-color .15s;
+}
+.list-tools button:hover { color:var(--heading); border-color:var(--border-strong); }
+.list-tools button:focus-visible { outline:2px solid var(--border-strong); outline-offset:2px; }
+.list-tools svg { flex:none; }
+/* ── 悬浮工具（滚动后浮现）：整页搜索 + 回到顶部 ── */
+.float-tools {
+  position:fixed; right:16px; bottom:16px; z-index:110;
+  display:flex; flex-direction:column; gap:8px;
+  opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .2s, transform .2s, visibility .2s;
+}
+.float-tools.show { opacity:1; visibility:visible; transform:none; }
+.float-btn {
+  width:40px; height:40px; border-radius:50%;
+  border:1px solid var(--border); background:var(--surface); color:var(--muted);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  padding:0; box-shadow:0 4px 14px rgba(0,0,0,.22);
+  transition:border-color .2s, color .2s;
+}
+.float-btn:hover { border-color:var(--border-strong); color:var(--text); }
+.float-btn:focus-visible { outline:2px solid var(--border-strong); outline-offset:2px; }
+/* 搜索面板：悬浮按钮上方 */
+.search-panel {
+  position:fixed; right:16px; bottom:68px; z-index:120;
+  width:min(440px, calc(100vw - 24px));
+  max-height:min(64vh, 580px);
+  display:flex; flex-direction:column;
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.search-panel[hidden] { display:none; }
+.sp-input-row {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 12px; border-bottom:1px solid var(--border);
+}
+.sp-input-row input {
+  flex:1; min-width:0;
+  background:none; border:0; outline:none;
+  color:var(--text); font-size:14px; font-family:inherit;
+}
+.sp-input-row input::placeholder { color:var(--faint); }
+.sp-count { font-size:11.5px; color:var(--muted); white-space:nowrap; }
+.sp-close {
+  border:0; background:none; color:var(--muted); cursor:pointer;
+  font-size:13px; padding:4px 7px; border-radius:6px; font-family:inherit; line-height:1;
+}
+.sp-close:hover { color:var(--text); background:var(--hover-bg); }
+.sp-results { overflow-y:auto; padding:6px; }
+.sr-item { padding:8px 10px; border-radius:8px; cursor:pointer; }
+.sr-item:hover { background:var(--hover-bg); }
+.sr-path { font-size:11.5px; color:var(--muted); margin-bottom:3px; }
+.sr-snippet { font-size:12.5px; color:var(--text); line-height:1.55; word-break:break-word; }
+.sr-snippet mark, .kp-detail mark.search-hit {
+  background:rgba(251,191,36,.5); color:inherit; border-radius:2px; padding:0 1px;
+}
+.sp-empty { padding:18px 12px; font-size:12.5px; color:var(--muted); text-align:center; }
+@media (max-width:600px) {
+  .float-tools { right:12px; bottom:12px; }
+  .search-panel { left:8px; right:8px; width:auto; bottom:64px; }
+  .sp-input-row input { font-size:16px; }
+}
 @media (prefers-reduced-motion:reduce) {
-  .arrow, .kp-arrow, .ch-title::before, .theme-toggle, .github-link, .export-md { transition:none; }
+  .arrow, .kp-arrow, .ch-title::before, .theme-toggle, .github-link, .export-md, .list-tools button, .float-tools, .float-btn { transition:none; }
 }
 </style>
 </head>
@@ -425,6 +499,23 @@ body.no-github .export-md { right:64px; }
 <a class="github-link" href="@@GITHUB@@" target="_blank" rel="noopener" aria-label="GitHub 项目源码" title="GitHub 项目源码">
   <svg width="19" height="19" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
 </a>
+<div class="float-tools" id="floatTools">
+  <button class="float-btn" onclick="toggleSearchPanel()" aria-label="搜索笔记内容" title="搜索笔记内容（Ctrl+K）">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+  </button>
+  <button class="float-btn" id="backTopBtn" onclick="scrollTopSmooth()" aria-label="回到顶部" title="回到顶部">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+  </button>
+</div>
+<div class="search-panel" id="searchPanel" role="dialog" aria-label="搜索笔记内容" hidden>
+  <div class="sp-input-row">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--muted);flex:none"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input id="searchInput" type="text" placeholder="搜索全部章节与考点内容…" aria-label="搜索全部章节与考点内容">
+    <span class="sp-count" id="searchCount"></span>
+    <button class="sp-close" onclick="closeSearchPanel()" aria-label="关闭搜索">✕</button>
+  </div>
+  <div class="sp-results" id="searchResults"></div>
+</div>
 <header>
   <h1>@@H1@@</h1>
   <div class="header-meta">
@@ -435,6 +526,16 @@ body.no-github .export-md { right:64px; }
   </div>
 </header>
 <div class="chapters">
+<div class="list-tools">
+  <button onclick="expandAllChapters()" aria-label="展开全部章节和考点" title="展开全部章节和考点">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+    展开全部
+  </button>
+  <button onclick="collapseAllChapters()" aria-label="收起全部章节和考点" title="收起全部章节和考点">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="7 11 12 6 17 11"/><polyline points="7 18 12 13 17 18"/></svg>
+    收起全部
+  </button>
+</div>
 @@CHAPTERS@@
 
 <script>
@@ -446,5 +547,39 @@ function mdInline(n){if(n.nodeType===3)return n.textContent;if(n.nodeType!==1)re
 function mdTable(t){var rows=[].map.call(t.rows,function(r){return [].map.call(r.cells,function(c){return mdInline(c).trim().replace(/\|/g,'\\|').replace(/\n/g,' ')})});if(!rows.length)return '';function line(cs){return '| '+cs.join(' | ')+' |'}var out=[line(rows[0]),line(rows[0].map(function(){return '---'}))];for(var i=1;i<rows.length;i++)out.push(line(rows[i]));return out.join('\n')}
 function mdDetail(el){var lines=[],cur='';function flush(){cur=cur.trim();if(cur)lines.push(cur);cur=''}[].forEach.call(el.childNodes,function(n){if(n.nodeType===3){cur+=n.textContent.replace(/\s+/g,' ');return}if(n.nodeType!==1)return;var tag=n.tagName;if(tag==='svg'){return}if(tag==='BR'){flush();return}if(tag==='TABLE'){flush();lines.push(mdTable(n));return}if(tag==='UL'){flush();[].forEach.call(n.children,function(li){lines.push('- '+mdInline(li).trim())});return}var txt=mdInline(n).trim();if(!txt)return;if(n.classList.contains('kp-sub')){flush();lines.push('#### '+txt);return}if(n.classList.contains('formula')){flush();txt.split('\n').forEach(function(l){lines.push('> '+l)});return}if(n.classList.contains('callout')){flush();txt.split('\n').forEach(function(l){lines.push('> '+l)});return}cur+=mdInline(n)});flush();return lines.join('\n\n')}
 function exportMarkdown(){var parts=[];var h1=document.querySelector('header h1');parts.push('# '+(h1?h1.textContent.trim():'考点笔记'));[].forEach.call(document.querySelectorAll('.ch'),function(ch){var ts=ch.querySelector('.ch-title span');var title='';if(ts){var c=ts.cloneNode(true);[].forEach.call(c.querySelectorAll('.badge'),function(b){b.remove()});title=c.textContent.trim()}parts.push('## '+title);var intro=ch.querySelector('.ch-intro');if(intro){var d=mdDetail(intro);if(d)parts.push(d)}[].forEach.call(ch.querySelectorAll('.kp'),function(kp){var num=kp.querySelector('.kp-num'),name=kp.querySelector('.kp-name');var head=((num?num.textContent.trim():'')+' '+(name?name.textContent.trim():'')).trim();parts.push('### '+head);var dt=kp.querySelector('.kp-detail');var dd=dt?mdDetail(dt):'';if(dd)parts.push(dd)})});parts.push('---');parts.push('*导出于 '+new Date().toLocaleString('zh-CN',{hour12:false})+'*');var md=parts.join('\n\n');var blob=new Blob(['\ufeff'+md],{type:'text/markdown;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='@@EXPORT_NAME@@';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);return md}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+/* 全部展开 / 收起：与单个 toggle 保持同一套状态（.open 类 + kp-detail 内联 display + aria-expanded） */
+function setAllChapters(open){[].forEach.call(document.querySelectorAll('.ch'),function(ch){ch.classList.toggle('open',open);var t=ch.querySelector('.ch-title');if(t)t.setAttribute('aria-expanded',String(open))});[].forEach.call(document.querySelectorAll('.kp'),function(kp){kp.classList.toggle('open',open);var t=kp.querySelector('.kp-title');if(t)t.setAttribute('aria-expanded',String(open));var d=kp.querySelector('.kp-detail');if(d)d.style.display=open?'block':'none'})}
+function expandAllChapters(){setAllChapters(true)}
+function collapseAllChapters(){setAllChapters(false)}
+/* ── 悬浮工具：整页搜索（含折叠内容）+ 回到顶部 ── */
+var _searchIndex=null;
+function getSearchIndex(){if(_searchIndex)return _searchIndex;_searchIndex=[];[].forEach.call(document.querySelectorAll('.ch'),function(ch){var ts=ch.querySelector('.ch-title span');var chName='';if(ts){var c=ts.cloneNode(true);[].forEach.call(c.querySelectorAll('.badge'),function(b){b.remove()});chName=c.textContent.trim()}[].forEach.call(ch.querySelectorAll('.kp'),function(kp){var num=kp.querySelector('.kp-num'),name=kp.querySelector('.kp-name'),d=kp.querySelector('.kp-detail');_searchIndex.push({ch:chName,kp:((num?num.textContent.trim():'')+' '+(name?name.textContent.trim():'')).trim(),kpEl:kp,chEl:ch,text:d?d.textContent.replace(/\s+/g,' '):''})})});return _searchIndex}
+var searchMarks=[];
+function clearSearchMarks(){searchMarks.forEach(function(m){var p=m.parentNode;if(!p)return;p.replaceChild(document.createTextNode(m.textContent),m);p.normalize()});searchMarks=[]}
+function markSnippet(text,lq){var low=text.toLowerCase(),out='',pos=0,i;while((i=low.indexOf(lq,pos))>=0){out+=escHtml(text.slice(pos,i))+'<mark>'+escHtml(text.substr(i,lq.length))+'</mark>';pos=i+lq.length}return out+escHtml(text.slice(pos))}
+function runSearch(){var inp=document.getElementById('searchInput'),box=document.getElementById('searchResults'),cnt=document.getElementById('searchCount');var q=inp.value.trim().toLowerCase();box.innerHTML='';if(!q){cnt.textContent='';box.innerHTML='<div class="sp-empty">输入关键词，搜索全部章节与考点（含折叠内容）</div>';return}var hits=getSearchIndex().filter(function(it){return it.text.toLowerCase().indexOf(q)>=0||it.kp.toLowerCase().indexOf(q)>=0||it.ch.toLowerCase().indexOf(q)>=0});cnt.textContent=hits.length?('共 '+hits.length+' 个考点'):'';
+if(!hits.length){box.innerHTML='<div class="sp-empty">没有找到「'+escHtml(inp.value.trim())+'」相关内容</div>';return}
+hits.slice(0,60).forEach(function(it,i){var text=it.text,low=text.toLowerCase(),f=low.indexOf(q),snip;if(f<0){snip=markSnippet(it.kp,q)}else{var s=Math.max(0,f-32),e=Math.min(text.length,f+q.length+64);snip=(s>0?'…':'')+markSnippet(text.slice(s,e),q)+(e<text.length?'…':'')}
+var el=document.createElement('div');el.className='sr-item';el.innerHTML='<div class="sr-path">'+escHtml(it.ch)+' ▸ '+escHtml(it.kp)+'</div><div class="sr-snippet">'+snip+'</div>';el.addEventListener('click',function(){jumpToSearchHit(it,q)});box.appendChild(el)});
+if(hits.length>60){var more=document.createElement('div');more.className='sp-empty';more.textContent='仅显示前 60 条，请细化关键词';box.appendChild(more)}}
+/* 页内高亮：只包普通文本节点，跳过 SVG 子树（mark 在 SVG 里非法） */
+function markInElement(root,q){if(!q)return;var lq=q.toLowerCase(),made=0;var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,function(n){if(!n.nodeValue||n.nodeValue.toLowerCase().indexOf(lq)<0)return NodeFilter.FILTER_REJECT;if(n.parentNode&&n.parentNode.ownerSVGElement)return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT}),nodes=[],n;while((n=walker.nextNode()))nodes.push(n);nodes.forEach(function(node){var txt=node.nodeValue,low=txt.toLowerCase(),pos=0,idx,frag=null;while((idx=low.indexOf(lq,pos))>=0&&made<120){if(!frag)frag=document.createDocumentFragment();if(idx>pos)frag.appendChild(document.createTextNode(txt.slice(pos,idx)));var m=document.createElement('mark');m.className='search-hit';m.textContent=txt.substr(idx,q.length);frag.appendChild(m);searchMarks.push(m);made++;pos=idx+q.length}if(frag){if(pos<txt.length)frag.appendChild(document.createTextNode(txt.slice(pos)));node.parentNode.replaceChild(frag,node)}})}
+function jumpToSearchHit(it,q){clearSearchMarks();it.chEl.classList.add('open');var ct=it.chEl.querySelector('.ch-title');if(ct)ct.setAttribute('aria-expanded','true');it.kpEl.classList.add('open');var kt=it.kpEl.querySelector('.kp-title');if(kt)kt.setAttribute('aria-expanded','true');var d=it.kpEl.querySelector('.kp-detail');if(d)d.style.display='block';markInElement(d,q);var y=it.kpEl.getBoundingClientRect().top+(window.scrollY||document.documentElement.scrollTop)-90;animateScrollTo(Math.max(0,y))}
+function openSearchPanel(){var p=document.getElementById('searchPanel');if(!p.hasAttribute('hidden')){document.getElementById('searchInput').focus();return}p.removeAttribute('hidden');if(!document.getElementById('searchInput').value)document.getElementById('searchResults').innerHTML='<div class="sp-empty">输入关键词，搜索全部章节与考点（含折叠内容）</div>';setTimeout(function(){document.getElementById('searchInput').focus()},50)}
+function closeSearchPanel(){var p=document.getElementById('searchPanel');if(p.hasAttribute('hidden'))return;p.setAttribute('hidden','');clearSearchMarks()}
+function toggleSearchPanel(){var p=document.getElementById('searchPanel');if(p.hasAttribute('hidden'))openSearchPanel();else closeSearchPanel()}
+/* 平滑滚动：定时器驱动，不依赖合成器动画帧（部分环境原生 smooth 不推进）；尊重减弱动效偏好 */
+function animateScrollTo(targetY){var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(reduced){window.scrollTo(0,targetY);onScrollFloat();return}var startY=window.scrollY||document.documentElement.scrollTop||0,delta=targetY-startY;if(delta===0)return;var t0=Date.now(),DUR=Math.min(650,240+Math.abs(delta)*0.15);var timer=setInterval(function(){var p=Math.min(1,(Date.now()-t0)/DUR);p=1-Math.pow(1-p,3);window.scrollTo(0,Math.round(startY+delta*p));if(p>=1){clearInterval(timer);onScrollFloat()}},16)}
+function scrollTopSmooth(){animateScrollTo(0)}
+document.addEventListener('click',function(e){var p=document.getElementById('searchPanel');if(p&&!p.hasAttribute('hidden')&&!p.contains(e.target)&&!e.target.closest('.float-tools'))closeSearchPanel()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeSearchPanel()}});
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();openSearchPanel()}});
+document.getElementById('searchInput').addEventListener('input',runSearch);
+document.getElementById('searchInput').addEventListener('keydown',function(e){if(e.key==='Enter'){var first=document.querySelector('#searchResults .sr-item');if(first)first.click()}});
+/* 滚动后浮现悬浮工具（搜索 / 回到顶部） */
+function onScrollFloat(){var y=window.scrollY||document.documentElement.scrollTop||0;document.getElementById('floatTools').classList.toggle('show',y>280)}
+window.addEventListener('scroll',onScrollFloat,{passive:true});
+onScrollFloat();
 </script>
 </div></body></html>
