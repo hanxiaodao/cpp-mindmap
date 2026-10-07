@@ -154,6 +154,34 @@ def build_chapters(chapters):
         parts.append('\n'.join(p))
     return '\n\n'.join(parts)
 
+def build_corner(front):
+    """右上角固定入口胶囊组（仿 02324 站点的错题本入口）。
+    front matter 里 quiz:/mistakes: 有值就各生成一枚，方便以后追加。"""
+    items = (('quiz', '刷题',
+              '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>'),
+             ('mistakes', '错题集',
+              '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'))
+    css = ('<style>'
+           '.corner-links{position:fixed;top:16px;right:160px;display:flex;gap:8px;z-index:100;}'
+           '.corner-link{height:38px;border-radius:19px;border:1px solid var(--border);'
+           'background:var(--surface);color:var(--muted);display:flex;align-items:center;gap:6px;'
+           'padding:0 13px;font-size:12.5px;text-decoration:none;transition:color .15s,border-color .15s;}'
+           '.corner-link:hover{color:var(--heading);border-color:var(--border-strong);}'
+           '.corner-link:focus-visible{outline:2px solid var(--border-strong);outline-offset:2px;}'
+           '@media (max-width:600px){.corner-links{top:10px;right:96px;}'
+           '.corner-link{height:36px;padding:0 11px;}}'
+           '</style>')
+    links = []
+    for key, label, icon in items:
+        url = front.get(key, '')
+        if url:
+            links.append(f'<a class="corner-link" href="{url}" target="_blank" rel="noopener" '
+                         f'aria-label="{label}" title="{label}">'
+                         f'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+                         f'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
+                         f'aria-hidden="true">{icon}</svg>{label}</a>')
+    return css + '<div class="corner-links">' + ''.join(links) + '</div>' if links else ''
+
 def main():
     front, chapters = parse_notes()
     tpl = open(TEMPLATE, encoding='utf-8').read()
@@ -166,11 +194,6 @@ def main():
     sub_stat = ''
     if subtitle:
         sub_stat = f'<div class="header-divider"></div><div class="header-stat"><strong>{inline(subtitle)}</strong></div>'
-    quiz = front.get('quiz', '')
-    if quiz:
-        sub_stat += (f'<div class="header-divider"></div><div class="header-stat">'
-                     f'<a href="{quiz}" target="_blank" rel="noopener" '
-                     f'style="text-decoration:none;color:inherit"><strong>刷题 →</strong></a></div>')
     export_name = course.replace(' ', '') + '考点笔记.md'
     out = head + (body
            .replace('@@PAGE_TITLE@@', inline(course) + ' · 考点笔记')
@@ -181,7 +204,7 @@ def main():
            .replace('@@BODY_CLASS@@', 'no-github' if not front.get('github') else '')
            .replace('@@GITHUB@@', front.get('github', '#'))
            .replace('@@EXPORT_NAME@@', export_name)
-           .replace('@@CHAPTERS@@', build_chapters(chapters)))
+           .replace('@@CHAPTERS@@', build_corner(front) + build_chapters(chapters)))
     open(OUT, 'w', encoding='utf-8').write(out)
     print(f'OK {OUT}: {len(chapters)} 章, {kp_total} 考点')
 
