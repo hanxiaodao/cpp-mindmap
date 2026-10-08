@@ -65,4 +65,18 @@ window.MISTAKES = [
     wrong:"输出顺序写错——漏了构造 Teacher 时也会先调基类构造、再输出一行 Constructor of Person:（每个派生类对象构造都要先走基类构造）；或把析构顺序当成先构造的先析构；~Student、~Person 函数体是空的，没有输出，别多写",
     fix:"4 行输出（已用编译器实测）：\nConstructor of Person:\nConstructor of Student\nConstructor of Person:\nDestructor of Teacher\n① 构造按对象定义顺序：先 s 后 t；且每个派生类对象构造都先调基类构造——s：Person 构造输出（注意行尾有冒号，Student 那行没有）→ Student 构造输出；t：Person 构造又输出一行 → Teacher 构造体为空不输出。\n② 析构与构造完全相反：t 先析构 → ~Teacher 输出 Destructor of Teacher → ~Person（空体无输出）；再 s 析构 → ~Student（空）→ ~Person（空），都无输出。\n③ ~Person 不是虚函数也没关系：s、t 是栈上具名对象，不是经基类指针 delete，派生类析构一定被调用；哪些行有输出只取决于哪个构造/析构函数体里写了 cout。",
     done:false },
+
+  { exam:"2025年10月", no:"31", type:"程序设计", ch:1, kp:"考点7",
+    q:"编写程序：先输入一个整数 n(n<100)，再输入 n 个数保存在一维数组 A 中，调用自定义函数 sortA() 将这 n 个数从小到大排序，主函数中输出排序后的结果",
+    code:"#include <iostream>\nusing namespace std;\nvoid sortA(int a[], int n)\n{\n    int i, j, t;\n    for (i = 0; i < n - 1; i++)\n        for (j = 0; j < n - 1 - i; j++)\n            if (a[j] > a[j + 1])\n            { t = a[j]; a[j] = a[j + 1]; a[j + 1] = t; }\n}\nint main()\n{\n    int a[100], n, i;\n    cin >> n;\n    for (i = 0; i < n; i++)\n        cin >> a[i];\n    sortA(a, n);\n    for (i = 0; i < n; i++)\n        cout << a[i] << \" \";\n    cout << endl;\n    return 0;\n}",
+    wrong:"排序边界和数组传参不熟：内层循环条件 j<n-1-i 容易误写成 j<n（越界多比一次）；形参 int a[] 与 int *a 的等价关系、数组名作实参自动传地址这点犹豫不决；趟数 n-1 与每趟比较次数容易差一",
+    fix:"参考答案见上方代码（冒泡排序，已编译运行验证：输入 5 个数 3 1 4 1 5 → 输出 1 1 3 4 5）。\n① n<100 → 数组开 a[100]；形参 int a[] 等价 int *a，数组名作实参传的就是地址，所以 sortA 里排好序，主函数里的 a 也就有序了。\n② 冒泡双循环：外层共 n-1 趟（i=0 到 n-2）；内层 j<n-1-i——每趟把当前最大值沉底后，尾部已就位的元素不用再比。\n③ 交换必须借临时变量：t=a[j]; a[j]=a[j+1]; a[j+1]=t;。\n④ 2025 年起程序设计第一小题考这种纯基础保底题（数组+函数），必须 10 分拿满。",
+    done:false },
+
+  { exam:"2025年10月", no:"32", type:"程序设计", ch:8, kp:"考点48",
+    q:"编写程序：把 d 盘根目录下文件 file1.txt 的内容复制到同目录下新建的文件 file2.txt 中，并显示 file2.txt 文件的内容，若打开文件失败请给出提示",
+    code:"#include <iostream>\n#include <fstream>\nusing namespace std;\nint main()\n{\n    char ch;\n    ifstream fin(\"d:\\\\file1.txt\");\n    if (!fin) { cout << \"打开 file1.txt 失败\" << endl; return 0; }\n    ofstream fout(\"d:\\\\file2.txt\");\n    if (!fout) { cout << \"创建 file2.txt 失败\" << endl; return 0; }\n    while (fin.get(ch))\n        fout << ch;\n    fin.close();\n    fout.close();\n    ifstream f2(\"d:\\\\file2.txt\");\n    if (!f2) { cout << \"打开 file2.txt 失败\" << endl; return 0; }\n    while (f2.get(ch))\n        cout << ch;\n    f2.close();\n    return 0;\n}",
+    wrong:"文件复制的固定套路没记牢：打开失败判断 if(!fin) 漏写；逐字符复制误用 fin>>ch（>> 按空白分隔提取，空白和换行全丢，复制后格式乱）；显示 file2 内容时要先 close 再重新打开读取，顺序容易乱",
+    fix:"参考答案见上方代码（考点48 固定套路：打开→判断→复制→关闭→重开显示，已编译验证打开失败的提示分支）。\n① 打开即判断：if(!fin){cout<<\"打开失败\"…;return 0;}——题目明说「打开失败请给出提示」，每个流都要判；ofstream fout(\"d:\\\\file2.txt\") 默认 ios::out，文件不存在则新建（题目要的「新建」就是这么来的）。\n② 复制用 while(fin.get(ch)) fout<<ch;——get(ch) 逐字符且不跳过空白换行；用 >> 复制会把所有空白换行丢掉。\n③ 显示：先 fin.close()/fout.close()，再 ifstream f2 重新打开 file2.txt 读出来 cout，读完 f2.close()。\n④ 路径写在字符串里，反斜杠必须双写：源码里是 \"d:\\\\file1.txt\"。",
+    done:false },
 ];
