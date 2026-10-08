@@ -58,4 +58,11 @@ window.MISTAKES = [
     wrong:"三个坑都踩了：① 对齐方式错误——忘了默认右对齐，补位应补在左边；② 错误地用 * 填充——width 的填充符默认是空格（除非 setfill 指定），题里的 \"*\" 是要输出的内容不是填充符；③ 科学计数法写错——scientific 下 precision(6) 是小数点后 6 位，且 showpos 设置后一直有效，最后一行也要带 +",
     fix:"5 行输出（␣ 代表空格）：\n␣␣␣*a=\n123.457\n+123.457\n␣␣-123.457\n+1.234568e+002\n① width(4) 只作用于紧随其后的 \"*\"（一次有效）：1 个字符右对齐补 3 个空格到宽 4，再原样输出 a=。\n② precision(6)：默认格式下是 6 位有效数字 → 123.457。\n③ setf(showpos) 持久生效，正数前加 + → +123.457。\n④ setw(10) 一次有效：-123.457 共 8 字符，右对齐左补 2 个空格；负数自带 -，showpos 对负数不再加 +。\n⑤ setf(scientific) 后 precision 变成小数点后位数 → 1.234568e+002（教材/VC 口径指数 3 位；GCC 等编译器输出 e+02），showpos 仍未清除 → 前面带 +。",
     done:false },
+
+  { exam:"2025年10月", no:"28", type:"程序分析", ch:5, kp:"考点34",
+    q:"阅读程序，写出运行结果（Person 基类 + Student/Teacher 派生类，两个栈上对象的构造析构顺序）",
+    code:"#include <iostream>\nusing namespace std;\n\nclass Person\n{\npublic:\n    Person() { cout << \"Constructor of Person:\" << endl; }\n    ~Person() {}\n};\n\nclass Student: public Person\n{\npublic:\n    Student() { cout << \"Constructor of Student\" << endl; }\n    ~Student() {}\n};\n\nclass Teacher: public Person\n{\npublic:\n    Teacher() {}\n    ~Teacher() { cout << \"Destructor of Teacher\" << endl; }\n};\n\nint main()\n{\n    Student s;\n    Teacher t;\n}",
+    wrong:"输出顺序写错——漏了构造 Teacher 时也会先调基类构造、再输出一行 Constructor of Person:（每个派生类对象构造都要先走基类构造）；或把析构顺序当成先构造的先析构；~Student、~Person 函数体是空的，没有输出，别多写",
+    fix:"4 行输出（已用编译器实测）：\nConstructor of Person:\nConstructor of Student\nConstructor of Person:\nDestructor of Teacher\n① 构造按对象定义顺序：先 s 后 t；且每个派生类对象构造都先调基类构造——s：Person 构造输出（注意行尾有冒号，Student 那行没有）→ Student 构造输出；t：Person 构造又输出一行 → Teacher 构造体为空不输出。\n② 析构与构造完全相反：t 先析构 → ~Teacher 输出 Destructor of Teacher → ~Person（空体无输出）；再 s 析构 → ~Student（空）→ ~Person（空），都无输出。\n③ ~Person 不是虚函数也没关系：s、t 是栈上具名对象，不是经基类指针 delete，派生类析构一定被调用；哪些行有输出只取决于哪个构造/析构函数体里写了 cout。",
+    done:false },
 ];

@@ -915,6 +915,7 @@ Person→Student→Teacher 全空体构造析构：
 2023.10 分析42：三层继承+成员对象 → class data/School/class data/Course/Score（6 分）
 2023.10 单选15：构造 ABC、析构 CBA
 2025.10 单选11：DerivedC:public BaseA,BaseB 构造次序 BaseA→BaseB→DerivedC
+2025.10 分析28：s、t 栈对象 → 构造 Person/Student/Person、析构逆序仅 Teacher 有输出（6 分）
 
 ### 考点35：多重继承与二义性
 
