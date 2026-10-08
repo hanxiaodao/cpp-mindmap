@@ -35,5 +35,20 @@ window.MISTAKES = [
     wrong:"只按构造顺序写了 BD，析构顺序漏写、或者把析构顺序也当成先基类后派生",
     fix:"输出 B D ~D ~B。构造顺序：先基类后派生（Base 构造、D 构造）；析构顺序相反：先派生后基类（~D、~B）。这里 p 是 Base* 但析构函数是 virtual，所以 delete p 能正确调到 ~D，否则只输出 ~B（未定义行为的内存泄漏）。",
     done:false },
+  ── 追加新错题 ──
   */
+
+  { exam:"2025年10月", no:"24", type:"程序填空", ch:6, kp:"考点40",
+    q:"将下面的程序补充完整，使程序输出的结果为：C++程序设计 / E::~E() called. / B::~B() called.",
+    code:"#include<iostream>\n#include<string>\nusing namespace std;\nclass B {\npublic:\n  void start() { cout<<\"B::start() called.\\n\"; }\n  ____(1)____ { cout<<\"B::~B() called.\\n\"; }\n};\nclass E : public B {\nprivate:\n  string buf;\npublic:\n  E(string p) { ____(2)____; cout<<buf<<endl; }\n  ~E() { cout<<\"E::~E() called.\\n\"; }\n};\nvoid fun(B *a) { delete a; }\nint main() {\n  B *a = ____(3)____;\n  fun(a);\n}",
+    wrong:"第(1)空只写了 ~B() 漏了 virtual——没意识到 a 虽是 B* 但实际指向 E 对象，对「经基类指针 delete 派生类对象必须配虚析构」这条规则不熟",
+    fix:"答案：(1) virtual ~B()；(2) buf=p；(3) new E(\"C++程序设计\")。关键在第(1)空：a 是 B* 指向 E 对象，delete a 时若 ~B 非虚，只会调基类析构、不会输出 E::~E()（派生部分未释放，还可能内存泄漏）；基类析构声明为 virtual 后，析构按先派生后基类的顺序执行，才得到 E::~E() called. 和 B::~B() called.。(2) 把形参存入 buf，构造时才能输出第一行 C++程序设计；(3) 用派生类构造函数在堆上建 E 对象交给基类指针。",
+    done:false },
+
+  { exam:"2025年10月", no:"25", type:"程序填空", ch:9, kp:"考点52",
+    q:"将下面的程序补充完整，使程序输出的结果为：-1,4-->4 / 1.5,3.8-->3.8",
+    code:"#include <iostream>\nusing namespace std;\n____(1)____\nclass A {\npublic:\n  T x,y;\n  void f(T a,T b) { x=a; y=b; }\n  ____(2)____{ return (x>y)?x:y; }\n  void print(T x,T y) { cout<<x<<\",\"<<y<<\"-->\"<<max(x,y)<<endl; }\n};\nint main() {\n  A <int>a;\n  A <double>b;\n  a.f(-1,4);\n  a.print(a.x,a.y);\n  ____(3)____;\n  b.print(b.x,b.y);\n}",
+    wrong:"第(1)空写错了——类模板定义开头必须有一行 template<typename T>（或 template<class T>）的模板声明，这里没写对，T 就无从声明",
+    fix:"答案：(1) template<typename T>（写 template<class T> 也可以）；(2) T max(T x,T y)；(3) b.f(1.5,3.8)。A<int>、A<double> 说明 A 是类模板：第(1)空必须在 class A 之前写模板声明行，T 才能作为成员的类型使用（类模板定义格式：template<typename T> + class，漏写或格式错都编译不过）；第(2)空 max 是返回较大者的成员函数，返回类型和两个参数都用 T；第(3)空 b 是 A<double> 对象，先调 b.f(1.5,3.8) 存入 x、y，print 才输出 1.5,3.8-->3.8（第一行 -1,4-->4 由 a.f(-1,4) 得来）。",
+    done:false },
 ];
