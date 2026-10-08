@@ -1172,11 +1172,67 @@ cout&lt;&lt;setw(8)&lt;&lt;setprecision(3)&lt;&lt;1.234567;  →  ####1.23    �
 cout.width(10); cout.fill('#'); cout&lt;&lt;10.456;  →  ####10.456
 cout&lt;&lt;showpos&lt;&lt;cnt;                        →  cnt=+3      （2024.10 分析40）
 cout.width(4); cout.fill('#'); cout&lt;&lt;setiosflags(ios::right)&lt;&lt;123;   →  #123</span>
-43.3 真题<br>
+43.3 补充速查：cout 格式控制一页树<br>
+<span class="formula">cout 格式控制
+│
+├─ ① 宽度 width
+│  ├─ cout.width(n)
+│  └─ setw(n)
+│      → 设置字段最小宽度
+│      → 只对"下一次输出"有效
+│      → 内容不够宽 → 填充
+│
+├─ ② 对齐
+│  ├─ right      → 右对齐【默认】
+│  ├─ left       → 左对齐
+│  └─ internal   → 符号/前缀在左，数字部分右对齐
+│
+├─ ③ 填充
+│  └─ setfill(c)
+│      → 设置空白位置的填充字符
+│      → 一直有效，直到重新设置
+│
+├─ ④ 浮点精度
+│  └─ setprecision(n)
+│      ├─ 默认/一般格式 → n位有效数字
+│      └─ fixed          → 小数点后n位
+│         scientific     → 小数点后n位
+│
+├─ ⑤ 浮点表示方式
+│  ├─ fixed       → 定点形式
+│  ├─ scientific  → 科学计数法
+│  └─ defaultfloat/取消上述格式 → 默认格式
+│
+├─ ⑥ 正负号
+│  └─ showpos
+│      → 正数显示 +
+│
+├─ ⑦ 小数点
+│  └─ showpoint
+│      → 强制显示小数点及必要的尾随0
+│
+├─ ⑧ 大小写
+│  └─ uppercase
+│      → 科学计数法 E、十六进制 A~F 等改大写
+│
+├─ ⑨ 进制
+│  ├─ dec → 十进制【默认】
+│  ├─ oct → 八进制
+│  └─ hex → 十六进制
+│
+├─ ⑩ 进制前缀
+│  └─ showbase
+│      → 显示 0、0x 等前缀
+│
+└─ ⑪ 布尔值
+   ├─ boolalpha     → true / false
+   └─ 默认          → 1 / 0</span>
+<ul><li>三大高频坑：width/setw <b>一次有效</b>；对齐默认<b>右对齐</b>、填充默认<b>空格</b>（不写 setfill 就别想成 * 或 0）；showpos/setf 一旦设置<span class="em">一直有效</span>，后面的输出都得带着（2025.10 分析30 最后一行 +1.234568e+002 的 + 就是这么来的）。</li></ul>
+43.4 真题<br>
 2023.04 分析45：setf dec + setw/setfill/precision + put（6 分）<br>
 2023.10 分析44：showpos/hex/width#fill/left/scientific/put('a'+25)（6 分）<br>
 2025.04 分析40：width(4) fill('#') right → #123，fill('+') left → 456+（6 分）<br>
-2025.10 分析30：width 一次有效输出 ␣␣␣*a=、123.457、+123.457、科学计数法（6 分）<br></div>
+2025.10 分析30：width 一次有效 ␣␣␣*a= / 123.457 / +123.457 / ␣␣-123.457 / +1.234568e+002（6 分）<br></div>
 </div>
 <div class="kp">
 <div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点44</span><span class="kp-name">标志字与 setf/setiosflags</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>

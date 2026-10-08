@@ -51,4 +51,11 @@ window.MISTAKES = [
     wrong:"第(1)空写错了——类模板定义开头必须有一行 template<typename T>（或 template<class T>）的模板声明，这里没写对，T 就无从声明",
     fix:"答案：(1) template<typename T>（写 template<class T> 也可以）；(2) T max(T x,T y)；(3) b.f(1.5,3.8)。A<int>、A<double> 说明 A 是类模板：第(1)空必须在 class A 之前写模板声明行，T 才能作为成员的类型使用（类模板定义格式：template<typename T> + class，漏写或格式错都编译不过）；第(2)空 max 是返回较大者的成员函数，返回类型和两个参数都用 T；第(3)空 b 是 A<double> 对象，先调 b.f(1.5,3.8) 存入 x、y，print 才输出 1.5,3.8-->3.8（第一行 -1,4-->4 由 a.f(-1,4) 得来）。",
     done:false },
+
+  { exam:"2025年10月", no:"30", type:"程序分析", ch:7, kp:"考点43",
+    q:"阅读程序，写出运行结果（cout 格式控制：width / precision / setf(showpos) / setw / setf(scientific)）",
+    code:"#include <iostream>\n#include <iomanip>\nusing namespace std;\nint main()\n{\n  double a = 123.45678;\n  cout.width(4);    cout<<\"*\"<<\"a=\"<<endl;\n  cout.precision(6);    cout<<a<<endl;\n  cout.setf(ios::showpos);    cout<<a<<endl;\n  cout<<setw(10)<<-a<<endl;\n  cout.setf(ios::scientific);    cout<<a<<endl;\n}",
+    wrong:"三个坑都踩了：① 对齐方式错误——忘了默认右对齐，补位应补在左边；② 错误地用 * 填充——width 的填充符默认是空格（除非 setfill 指定），题里的 \"*\" 是要输出的内容不是填充符；③ 科学计数法写错——scientific 下 precision(6) 是小数点后 6 位，且 showpos 设置后一直有效，最后一行也要带 +",
+    fix:"5 行输出（␣ 代表空格）：\n␣␣␣*a=\n123.457\n+123.457\n␣␣-123.457\n+1.234568e+002\n① width(4) 只作用于紧随其后的 \"*\"（一次有效）：1 个字符右对齐补 3 个空格到宽 4，再原样输出 a=。\n② precision(6)：默认格式下是 6 位有效数字 → 123.457。\n③ setf(showpos) 持久生效，正数前加 + → +123.457。\n④ setw(10) 一次有效：-123.457 共 8 字符，右对齐左补 2 个空格；负数自带 -，showpos 对负数不再加 +。\n⑤ setf(scientific) 后 precision 变成小数点后位数 → 1.234568e+002（教材/VC 口径指数 3 位；GCC 等编译器输出 e+02），showpos 仍未清除 → 前面带 +。",
+    done:false },
 ];
