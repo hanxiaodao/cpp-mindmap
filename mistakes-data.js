@@ -80,6 +80,20 @@ window.MISTAKES = [
     fix:"参考答案见上方代码（考点48 固定套路：打开→判断→复制→关闭→重开显示，已编译验证打开失败的提示分支）。\n① 打开即判断：if(!fin){cout<<\"打开失败\"…;return 0;}——题目明说「打开失败请给出提示」，每个流都要判；ofstream fout(\"d:\\\\file2.txt\") 默认 ios::out，文件不存在则新建（题目要的「新建」就是这么来的）。\n② 复制用 while(fin.get(ch)) fout<<ch;——get(ch) 逐字符且不跳过空白换行；用 >> 复制会把所有空白换行丢掉。\n③ 显示：先 fin.close()/fout.close()，再 ifstream f2 重新打开 file2.txt 读出来 cout，读完 f2.close()。\n④ 路径写在字符串里，反斜杠必须双写：源码里是 \"d:\\\\file1.txt\"。",
     done:false },
 
+  { exam:"2025年4月", no:"32", type:"程序填空", ch:3, kp:"考点21",
+     q:"补全复制构造函数，使程序输出：第一行 100,\\t10,\\t1；第二行 0,\\t5,\\t1。考查带指针成员的深拷贝。",
+     code:"#include <iostream>\nusing namespace std;\nclass pointer\n{\npublic:\n    int a;\n    int *p;\n    pointer()\n    {\n        a=100;\n        p=new int(10);\n    }\n    pointer(const pointer &temp)\n    {\n        if(this != (1))\n        {\n            a = temp.a;\n            p = (2);\n        }\n    }\n};\nint main()\n{\n    pointer p1;\n    pointer p2(p1);\n    cout<<p1.a<<\",\\t\"<<*p1.p<<\",\\t\"<<(p1.p!=p2.p)<<endl;\n    *p1.p=5;\n    p2.a=20;\n    cout<<(p1.a==p2.a)<<\",\\t\"<<*p1.p<<\",\\t\"<<(p1.p!=p2.p)<<endl;\n    return 0;\n}",
+     wrong:"第(2)空写成了 temp.p，把指针成员的地址直接复制成浅拷贝；另外根据题面还原时把 a=temp.a 误看成了 a=*temp.p。",
+     fix:"答案：(1) &temp；(2) new int(*temp.p)。复制构造函数中，a 是普通 int 成员，应复制 temp.a；p 是指针，不能写 p=temp.p，否则 p1.p 与 p2.p 指向同一块堆内存，析构时会重复释放，且修改一方会影响另一方。深拷贝要先 new 一块新 int，再复制指针所指的值：p=new int(*temp.p)。this != &temp 是防止自复制的判断。按 PDF 中的 != 比较，深拷贝使两指针地址不同，所以两行末尾都是 1；修改 *p1.p 后只改变 p1 的值，p2 仍独立。",
+     done:false },
+
+  { exam:"2025年4月", no:"35", type:"程序填空", ch:7, kp:"考点46",
+     q:"从输入字符串中提取电话号码：输入 Tel,123456，输出 123456。",
+     code:"#include <iostream>\nusing namespace std;\nint main()\n{\n    char str[30];\n    while(!cin.eof())\n    {\n        cin.ignore(10, ',');\n        if( (1) )\n        {\n            (2) ;\n            cout << str << endl;\n        }\n    }\n    return 0;\n}",
+     wrong:"两个空都填错了：没有先判断输入流状态，且把读取逗号后剩余字符串的成员函数写错。ignore 只负责跳过 Tel,，不会把电话号码放进 str。",
+     fix:"答案建议：(1) cin.good()；(2) cin.getline(str,30)。cin.ignore(10, ',') 从输入流中最多跳过 10 个字符，遇到逗号也停止，并丢弃逗号，因此 Tel, 被跳过；随后 cin.getline(str,30) 读取剩余的 123456，cout 输出电话号码。cin.good() 用来确认跳过操作后流状态正常。对本题这一行输入，(1) 写 !cin.eof() 也能工作，但 good() 更直接地检查输入是否成功；实际编程不建议单独用 while(!cin.eof()) 控制读取，应优先用读取成功条件。",
+     done:false },
+
   { exam:"2025年4月", no:"31", type:"程序填空", ch:3, kp:"考点22",
     q:"补全程序，使程序输出结果为 85",
     code:"#include <iostream>\nusing namespace std;\nclass Test {\npublic:\n    ____(1)____\n    Test(int i = 5) {\n        x = i + x;\n    }\n    int Getnum() {\n        return Test::x + 7;\n    }\n};\n____(2)____\nint main() {\n    Test test;\n    cout << test.Getnum() << endl;\n}",
