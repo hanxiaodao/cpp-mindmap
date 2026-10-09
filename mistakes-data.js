@@ -79,4 +79,11 @@ window.MISTAKES = [
     wrong:"文件复制的固定套路没记牢：打开失败判断 if(!fin) 漏写；逐字符复制误用 fin>>ch（>> 按空白分隔提取，空白和换行全丢，复制后格式乱）；显示 file2 内容时要先 close 再重新打开读取，顺序容易乱",
     fix:"参考答案见上方代码（考点48 固定套路：打开→判断→复制→关闭→重开显示，已编译验证打开失败的提示分支）。\n① 打开即判断：if(!fin){cout<<\"打开失败\"…;return 0;}——题目明说「打开失败请给出提示」，每个流都要判；ofstream fout(\"d:\\\\file2.txt\") 默认 ios::out，文件不存在则新建（题目要的「新建」就是这么来的）。\n② 复制用 while(fin.get(ch)) fout<<ch;——get(ch) 逐字符且不跳过空白换行；用 >> 复制会把所有空白换行丢掉。\n③ 显示：先 fin.close()/fout.close()，再 ifstream f2 重新打开 file2.txt 读出来 cout，读完 f2.close()。\n④ 路径写在字符串里，反斜杠必须双写：源码里是 \"d:\\\\file1.txt\"。",
     done:false },
+
+  { exam:"2025年4月", no:"31", type:"程序填空", ch:3, kp:"考点22",
+    q:"补全程序，使程序输出结果为 85",
+    code:"#include <iostream>\nusing namespace std;\nclass Test {\npublic:\n    ____(1)____\n    Test(int i = 5) {\n        x = i + x;\n    }\n    int Getnum() {\n        return Test::x + 7;\n    }\n};\n____(2)____\nint main() {\n    Test test;\n    cout << test.Getnum() << endl;\n}",
+    wrong:"第(2)空直接写成了赋值语句 Test::x = 73;——把「类外定义」当成了「赋值」，少了类型和类域限定。两个错因：① 静态数据成员必须「类内声明 + 类外定义」，类外那一行是定义语句，要写 int Test::x = 73;，不能带 static；② 全局作用域只允许出现声明/定义，不允许写表达式语句，所以 Test::x = 73; 放在类外根本无法通过编译。",
+    fix:"答案：(1) static int x;  (2) int Test::x = 73;\n为什么输出 85：(1) 类内 static int x; 只是声明，此时不分配内存、也不写初值；(2) 类外 int Test::x = 73; 才是定义并给初值 73（类外定义不再写 static，但要写类型 int 和类域 Test::）。main 里 Test test; 用默认实参 i=5 调构造 → x = i + x = 5 + 73 = 78（是「在已有静态值上累加」，不是覆盖初值）→ test.Getnum() 返回 Test::x + 7 = 78 + 7 = 85。\n配套要点：静态数据成员的「类内声明（写 static，不给初值）+ 类外定义（类型 类名::成员名 = 初值，不写 static）」是一对，漏掉类外定义会报链接错误（undefined reference）；文件作用域只能写定义/声明，不能写赋值、调用等语句；访问时 Test::x 与 test.x 是同一份存储。",
+    done:false },
 ];
