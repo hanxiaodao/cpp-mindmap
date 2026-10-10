@@ -94,6 +94,13 @@ window.MISTAKES = [
      fix:"答案建议：(1) cin.good()；(2) cin.getline(str,30)。cin.ignore(10, ',') 从输入流中最多跳过 10 个字符，遇到逗号也停止，并丢弃逗号，因此 Tel, 被跳过；随后 cin.getline(str,30) 读取剩余的 123456，cout 输出电话号码。cin.good() 用来确认跳过操作后流状态正常。对本题这一行输入，(1) 写 !cin.eof() 也能工作，但 good() 更直接地检查输入是否成功；实际编程不建议单独用 while(!cin.eof()) 控制读取，应优先用读取成功条件。",
      done:false },
 
+  { exam:"2025年4月", no:"41", type:"程序设计", ch:1, kp:"考点6",
+     q:"设计程序：输入圆的半径，计算并输出圆的周长和面积。其中 pi 用常量定义，半径、周长和面积均为双精度（double）类型。",
+     code:"#include <iostream>\nusing namespace std;\nint main()\n{\n    const double pi = 3.1415926;   // ← 常量定义（本题的错误点）\n    double r, c, s;\n    cout << \"请输入半径：\";\n    cin >> r;\n    c = 2 * pi * r;   // 周长 = 2πr\n    s = pi * r * r;   // 面积 = πr²\n    cout << \"周长=\" << c << endl;\n    cout << \"面积=\" << s << endl;\n    return 0;\n}",
+     wrong:"圆周长面积的思路会写，但「pi 用常量定义」这一行写错——这是本题唯一的规定动作，写错直接丢分。四种典型错法（均已用编译器实测确认报错）：\n① 漏类型：const pi = 3.14; → error: a type specifier is required for all declarations（const 后面必须跟类型名）。\n② 先定义后赋值：const double pi; pi = 3.14; → error: default initialization of an object of const type 'const double' + cannot assign to variable 'pi' with const-qualified type（const 变量必须在定义处就初始化）。\n③ 宏定义写成赋值：#define pi = 3.14 → error: expected expression（宏定义不写等号）。\n④ 宏末尾多写分号：#define pi 3.14; → error: indirection requires pointer operand（分号一起被替换，2*pi*r 展开成 2*3.14;*r）。\n另有「写成普通变量 double pi = 3.14;」，语法没错但不满足题面「用常量定义」的要求。",
+     fix:"标准写法：const double pi = 3.1415926;（已编译运行验证：r=2 → 周长=12.5664，面积=12.5664）\n① const 常量（常变量）格式：const + 类型名 + 名字 + = + 初值；——必须定义时初始化，此后只读，先定义后赋值 pi=3.14; 也是编译错误。\n② 命名习惯：常量名写全大写（PI），和普通变量区分开。\n③ 也可以用宏：#define PI 3.1415926——宏定义不能写 =、末尾不能加分号，这两个坑最容易踩。\n④ 类型要求别漏：double r, c, s; 三个量都是 double，cin >> r; 读半径，再算 c = 2*pi*r、s = pi*r*r，cout 输出。\n⑤ 对照记忆：const 常量 = 有类型的只读变量（编译期检查、遵守作用域）；#define 宏 = 预处理阶段的纯文本替换（无类型、无作用域、吃分号）。题目说「pi 用常量定义」两种都算，用 const 更符合 C++ 习惯。\n⑥ 这是 2025 年起新出现的「纯基础保底程序设计题」（10 分），和 2025.10 设计31 的 sortA 排序一样属于必须拿满的题。",
+     done:false },
+
   { exam:"2025年4月", no:"31", type:"程序填空", ch:3, kp:"考点22",
     q:"补全程序，使程序输出结果为 85",
     code:"#include <iostream>\nusing namespace std;\nclass Test {\npublic:\n    ____(1)____\n    Test(int i = 5) {\n        x = i + x;\n    }\n    int Getnum() {\n        return Test::x + 7;\n    }\n};\n____(2)____\nint main() {\n    Test test;\n    cout << test.Getnum() << endl;\n}",

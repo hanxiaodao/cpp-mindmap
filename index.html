@@ -732,7 +732,7 @@ cout &lt;&lt; ns::x;                       // 作用域运算符限定访问</sp
 2024.10 填空21：f2() 中可调用 main() 和 f1()<br></div>
 </div>
 <div class="kp">
-<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点6</span><span class="kp-name">const 与指针</span><span class="kp-level lv-B">B</span><span class="kp-freq">2024.04、2024.10、2025.04</span><span class="kp-arrow">▼</span></div>
+<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点6</span><span class="kp-name">const、常量与指针</span><span class="kp-level lv-B">B</span><span class="kp-freq">2023.10、2024.04、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">6.1 必背<br>
 <table><tr><th>写法</th><th>含义</th><th>人话</th></tr><tr><td>`const int *p`</td><td>指向常量的指针</td><td>*p 不能改，p 能改</td></tr><tr><td>`int * const p`</td><td>常指针</td><td>p 不能改，*p 能改</td></tr><tr><td>`const int * const p`</td><td>都不能改</td><td>全禁（2025.04 单选3 选"均禁止修改"）</td></tr></table>
 <span class="callout tip">【记忆】const 在 * 左边管内容（*p），在 * 右边管指针本身（p）。</span>
@@ -742,7 +742,13 @@ cout &lt;&lt; ns::x;                       // 作用域运算符限定访问</sp
 6.3 真题<br>
 2025.04 第3题：const char *const p 两个都禁止修改<br>
 2024.10 分析36：const 指针 + 引用传参输出 1 2 1 / 0 0 0<br>
-2024.04 第2题：const int *a=&amp;a; 是不正确的 const 用法<br></div>
+2024.04 第2题：const int *a=&amp;a; 是不正确的 const 用法<br>
+6.4 常量定义（const 常量 vs #define 宏）<br>
+<ul><li>格式：`const 类型名 常量名 = 初值;`，如 `const double PI = 3.1415926;`——<b>必须在定义处初始化</b>，此后只读。</li></ul>
+<table><tr><th>写法</th><th>结果</th></tr><tr><td>`const double pi = 3.14;`</td><td>✅ 正确</td></tr><tr><td>`const pi = 3.14;`</td><td>❌ 缺类型（a type specifier is required）</td></tr><tr><td>`const double pi; pi = 3.14;`</td><td>❌ const 变量必须定义时初始化</td></tr><tr><td>`double pi = 3.14;`</td><td>⚠️ 语法对，但不满足"用常量定义"的要求</td></tr><tr><td>`#define PI 3.1415926`</td><td>✅ 宏也可以，<b>不能写 =、末尾不加分号</b></td></tr><tr><td>`#define PI = 3.14` / `#define PI 3.14;`</td><td>❌ 多写 = 或多写分号，展开后编译报错</td></tr></table>
+<span class="callout err">const 常量 = 有类型的只读变量（编译期检查、遵守作用域）；#define 宏 = 预处理阶段的纯文本替换（无类型、无作用域、吃分号）。考试写「pi 用常量定义」两种都算，用 const 更稳。</span>
+6.5 真题<br>
+2025.04 设计41：输入半径算圆周长面积，pi 用常量定义（10 分基础保底题；周长 2πr、面积 πr²）<br></div>
 </div>
 <div class="kp">
 <div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点7</span><span class="kp-name">引用与传参</span><span class="kp-level lv-C">C</span><span class="kp-freq">2023.10、2024.10、2025.10</span><span class="kp-arrow">▼</span></div>
