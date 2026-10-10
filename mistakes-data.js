@@ -176,4 +176,11 @@ window.MISTAKES = [
     wrong:"get 读出函数写错了——参数写成了值传递 void get(string p, int a, int b)，在函数体内 p=a=b 赋的只是形参副本，函数返回后外面变量的值根本没变，「读出」无效。读出函数的参数必须是引用。",
     fix:"答案见上方代码（已编译运行验证：输出 姓名:张三 英语:85 C++:92 平均:88.5 / 读出:张三 85 92 / 姓名:李四 英语:78 C++:66 平均:72）。\n① get 要把对象内部的数据「带出去」到外部变量 p、a、b，形参必须是对外部变量的别名——写 string &p, int &a, int &b（引用），赋值 p=name 就是直接改外面的变量。值传递只改副本，函数一返回副本就销毁，这就是「读出必须引用」的原因，和 setzero(int &a) 改实参（2024.10 分析36）同一个规则（考点7）。\n② 类骨架五件套按题目点名的顺序写全：私有成员（姓名 string、成绩 int）→ 构造函数（带参初始化）→ 写入函数 set → 读出函数 get（引用参数）→ 求平均 aver → 显示 show。题目点名什么就写什么，别漏函数也别自创。\n③ 细节分：aver() 返回 double 且除以 2.0（写 /2 会整型截断，88.5 变 88）；main 里按「构造 → 显示 → get 读出验证 → set 写入后再显示」的顺序把每个成员函数都测一遍，正好呼应题目「测试数据成员与成员函数的正确性」。\n④ 这就是 2025 年起设计第一题的「基础类设计保底」题型（考点14/18，模板见高频公式 11)，2026.04 设计22 的 Student 类同款——15/10 分必须拿满。",
     done:false },
+
+  { exam:"2023年4月", no:"46", type:"程序设计", ch:8, kp:"考点48",
+    q:"读入当前文件夹下文件 dev1.cpp，为该文件的每行代码加上行号后存入 dev2.txt 文件中。",
+    code:"#include <iostream>\n#include <fstream>\nusing namespace std;\nint main()\n{\n    char buf[80];\n    int line = 0;\n    ifstream fin(\"dev1.cpp\");\n    if (!fin) { cout << \"打开 dev1.cpp 失败\" << endl; return 0; }\n    ofstream fout(\"dev2.txt\");\n    if (!fout) { cout << \"创建 dev2.txt 失败\" << endl; return 0; }\n    while (fin.getline(buf, 80))\n    {\n        line++;\n        fout << line << \": \" << buf << endl;\n    }\n    fin.close();\n    fout.close();\n    return 0;\n}",
+    wrong:"不知道怎么读取一整行的——只熟悉 fin >> 按空白分隔提取，而 >> 会把一行代码按空格/制表符切碎、丢掉所有空白缩进，根本没法按行处理；getline 的用法（参数含义、返回值怎么当循环条件）没掌握",
+    fix:"参考答案见上方代码（已编译运行验证：dev1.cpp 为 7 行 C++ 源码时，dev2.txt 逐行为 1: #include <iostream> … 7: }，行号与原行内容一一对应）。\n① 读一整行用 fin.getline(buf, 80)：两个参数——buf 是存行的字符数组、80 表示最多读入 79 个字符（自动补 '\\0'）；遇到 '\\n' 停止，并把换行符从流中取走丢弃，所以 buf 里是纯行内容，下一轮自动接下一行。用 >> 读不了整行：>> 以空白为分隔符，一行代码会被拆成多个数据项且缩进全丢。\n② 循环条件直接写 while(fin.getline(buf, 80))：getline 返回 istream& 流引用，读成功为真、读到文件尾（一行都没读到）为假，循环自动结束——和 while(fin>>x)（考点48）、while(fin.read(&ch,1))（考点49）同一个套路，不要写 !fin.eof()。\n③ 行号在循环里自增再连同行内容写出：fout << line << \": \" << buf << endl;——题目没规定行号格式，\"1: 代码\"、\"1 代码\"、\"1,代码\" 都算加上了行号。\n④ 打开失败判 if(!fin)（考点48 固定套路）；文件在「当前文件夹」下，直接写文件名 \"dev1.cpp\"，不用带路径（带路径才要反斜杠双写）。", 
+    done:false },
 ];
