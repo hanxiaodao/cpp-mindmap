@@ -983,17 +983,18 @@ n=2,sum=2 / n=3,sum=5 / n=5,sum=10    （2024.04 分析44）</span>
 2023.10 分析42：Course 含 data d1/d2 → class data/School/class data/Course/Score（6 分）<br></div>
 </div>
 <div class="kp">
-<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点25</span><span class="kp-name">友元</span><span class="kp-level lv-S">S</span><span class="kp-freq">2023.04、2023.10、2024.04、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
+<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点25</span><span class="kp-name">友元</span><span class="kp-level lv-S">S</span><span class="kp-freq">2023.04、2023.10、2024.04、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">25.1 必背<br>
 <span class="formula">friend void Print(Date &amp;d);        // 友元函数（写在类内任意位置）
 friend class Line;                 // 友元类</span>
 <ul><li>友元<b>不是成员函数</b>，但能访问类的<b>所有成员</b>（不受访问权限限制）。</li><li>友元关系<b>单向且不传递</b>：A 是 B 的友元、B 是 C 的友元 ⇒ A 不是 C 的友元（2025.04 单选9）。</li><li>代价是破坏封装，收益是<b>提高访问效率</b>（2023.04 填空24）。</li><li>友元函数<b>没有 this 指针</b>；友元不是成员函数，不能被继承。</li></ul>
 25.2 怎么判断（固定大题模型：友元访问私有）<br>
-<ul><li>友元函数形参是对象引用，函数体内直接 `d.year` 访问私有成员（2023.04 程序填空38：补 friend void Print(Date&amp;)）。</li><li>类 A 的成员函数要访问类 B 私有成员：在 B 中声明 `friend class A;`（2023.10 程序填空37：Line 访问 Point 私有 x,y）。</li></ul>
+<ul><li>友元函数形参是对象引用，函数体内直接 `d.year` 访问私有成员（2023.04 程序填空38：补 friend void Print(Date&amp;)）。</li><li>类 A 的成员函数要访问类 B 私有成员：在 B 中声明 `friend class A;`（2023.10 程序填空37：Line 访问 Point 私有 x,y）。</li><li>判空技巧：空长成 `____(const 类名&amp; obj);` 且类外有同名函数定义、函数体访问 obj.私有成员 ⇒ 填 `friend void 函数名`，friend 不能丢；只填 `void Print(...)` 是声明了一个私有成员函数，类外定义照样报 private（2024.10 填空32：INTEGER 类补 friend void Print，另一空 this-&gt;a=a）。</li></ul>
 25.3 真题<br>
 2023.10 分析41：Time24 友元函数输出 11:30PM=23:30 / 10:45AM=10:45（6 分）<br>
 2023.10 填空27：friend class FriendClass;<br>
-2025.10 分析26：friend int max(int a,int b) 配合 const 重载<br></div>
+2025.10 分析26：friend int max(int a,int b) 配合 const 重载<br>
+2024.10 填空32：friend void Print(const INTEGER&amp;)（另一空 this-&gt;a=a，参数与成员同名）<br></div>
 </div>
 </div>
 </div>
@@ -1245,7 +1246,8 @@ cout.width(4); cout.fill('#'); cout&lt;&lt;setiosflags(ios::right)&lt;&lt;123;  
 2023.04 分析45：setf dec + setw/setfill/precision + put（6 分）<br>
 2023.10 分析44：showpos/hex/width#fill/left/scientific/put('a'+25)（6 分）<br>
 2025.04 分析40：width(4) fill('#') right → #123，fill('+') left → 456+（6 分）<br>
-2025.10 分析30：width 一次有效 ␣␣␣*a= / 123.457 / +123.457 / ␣␣-123.457 / +1.234568e+002（6 分）<br></div>
+2025.10 分析30：width 一次有效 ␣␣␣*a= / 123.457 / +123.457 / ␣␣-123.457 / +1.234568e+002（6 分）<br>
+2024.10 分析40：setprecision(5) 按有效数字 → 123.46，setw(10) 左补 4 个空格；setfill('*') setw(8) → **123_Hi；showpos → cnt=+3（6 分）<br></div>
 </div>
 <div class="kp">
 <div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点44</span><span class="kp-name">标志字与 setf/setiosflags</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
@@ -1299,7 +1301,7 @@ cout &lt;&lt; resetiosflags(ios::left);        // 清除标志</span>
 2023.10 第19题：ifstream infile("D:\\f1.txt",ios::in) 正确<br></div>
 </div>
 <div class="kp">
-<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点48</span><span class="kp-name">文本文件读写</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.04、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
+<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点48</span><span class="kp-name">文本文件读写</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.04、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">48.1 必背（读写方式）<br>
 <span class="formula">ofstream fout("b.txt");            // 写文本
 fout &lt;&lt; name &lt;&lt; " " &lt;&lt; score &lt;&lt; endl;
@@ -1314,7 +1316,8 @@ fin.get(ch);  fout.put(ch);        // 逐字符</span>
 2023.04 设计46：读 dev1.cpp 加行号写 dev2.txt（5 分）<br>
 2025.04 设计42：score.txt 读学号姓名成绩显示（10 分）<br>
 2023.10 设计47：读 data.txt 排序写 res.txt（10 分）<br>
-2025.10 设计32：file1.txt→file2.txt 复制并显示、打开失败提示（10 分）<br></div>
+2025.10 设计32：file1.txt→file2.txt 复制并显示、打开失败提示（10 分）<br>
+2024.10 设计41：c 盘 score.txt 读姓名+总成绩 → 显示 → 成绩降序 sort → 写 out.txt（10 分）<br></div>
 </div>
 <div class="kp">
 <div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点49</span><span class="kp-name">二进制文件与 read/write</span><span class="kp-level lv-B">B</span><span class="kp-freq">2024.04、2025.10、2024.10</span><span class="kp-arrow">▼</span></div>
@@ -1407,11 +1410,15 @@ virtual void showarea() const = 0;    // 派生类必须全部实现</span>
 <span class="formula">// 7) 文件三连
 ifstream fin("a.txt", ios::in);       // 读
 ofstream fout("b.txt", ios::out);     // 写（清空）；追加用 ios::app
-while(!fin.eof()){ fin&gt;&gt;x; ... }  fin.close(); fout.close();</span>
+while(fin&gt;&gt;x){ ... }  fin.close(); fout.close();</span>
 <span class="formula">// 8) 重定向
 freopen("a.txt", "r", stdin);</span>
 <span class="formula">// 9) 类模板类外定义
-template &lt;class T&gt; T TestClass&lt;T&gt;::getData(形参表){ ... }</span></div>
+template &lt;class T&gt; T TestClass&lt;T&gt;::getData(形参表){ ... }</span>
+<span class="formula">// 10) 读入数组 + sort 排序（#include &lt;algorithm&gt;）
+struct Stu { string name; double score; };
+bool cmp(const Stu &amp;x, const Stu &amp;y){ return x.score &gt; y.score; }   // 大于号 = 降序
+sort(s, s + n, cmp);    // 升序可省略 cmp</span></div>
 </div>
 </div>
 
@@ -1445,7 +1452,7 @@ template &lt;class T&gt; T TestClass&lt;T&gt;::getData(形参表){ ... }</span><
 ③ 补运算符重载函数            ④ 补继承头 class D:public B + 初始化列表
 ⑤ 补模板头 template&lt;typename T&gt; ⑥ 补深拷贝/文件打开/重定向</span>
 程序设计·两大题材（2×10=20 分）<br>
-【题材一】文件：打开→读（while(!fin.eof())）→处理（排序/统计）→写→关闭。失败判断：`if(!fin){cout&lt;&lt;"打开失败";return 0;}`<br>
+【题材一】文件：打开→读（while(fin&gt;&gt;x) 读取表达式作条件）→处理（排序/统计）→写→关闭。失败判断：`if(!fin){cout&lt;&lt;"打开失败";return 0;}`<br>
 【题材二】继承族：基类（protected 成员+虚函数/纯虚）→ 派生类（初始化列表调基类构造、重写虚函数、新增成员函数 Area/output 等）。<br>
 【新趋势】2025 年起第一小题出现纯基础题（圆周长面积、数组排序 sortA）——保底题，确保拿满。<br></div>
 </div>

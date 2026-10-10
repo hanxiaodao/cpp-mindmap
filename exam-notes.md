@@ -740,7 +740,7 @@ meta: level=B; freq=2023.10、2025.04、2025.10
 
 ### 考点25：友元
 
-meta: level=S; freq=2023.04、2023.10、2024.04、2025.04、2025.10
+meta: level=S; freq=2023.04、2023.10、2024.04、2024.10、2025.04、2025.10
 
 #### 25.1 必背
 
@@ -758,12 +758,14 @@ friend class Line;                 // 友元类
 
 - 友元函数形参是对象引用，函数体内直接 `d.year` 访问私有成员（2023.04 程序填空38：补 friend void Print(Date&)）。
 - 类 A 的成员函数要访问类 B 私有成员：在 B 中声明 `friend class A;`（2023.10 程序填空37：Line 访问 Point 私有 x,y）。
+- 判空技巧：空长成 `____(const 类名& obj);` 且类外有同名函数定义、函数体访问 obj.私有成员 ⇒ 填 `friend void 函数名`，friend 不能丢；只填 `void Print(...)` 是声明了一个私有成员函数，类外定义照样报 private（2024.10 填空32：INTEGER 类补 friend void Print，另一空 this->a=a）。
 
 #### 25.3 真题
 
 2023.10 分析41：Time24 友元函数输出 11:30PM=23:30 / 10:45AM=10:45（6 分）
 2023.10 填空27：friend class FriendClass;
 2025.10 分析26：friend int max(int a,int b) 配合 const 重载
+2024.10 填空32：friend void Print(const INTEGER&)（另一空 this->a=a，参数与成员同名）
 
 ## 第四章 运算符重载
 
@@ -1248,6 +1250,7 @@ cout.width(4); cout.fill('#'); cout<<setiosflags(ios::right)<<123;   →  #123
 2023.10 分析44：showpos/hex/width#fill/left/scientific/put('a'+25)（6 分）
 2025.04 分析40：width(4) fill('#') right → #123，fill('+') left → 456+（6 分）
 2025.10 分析30：width 一次有效 ␣␣␣*a= / 123.457 / +123.457 / ␣␣-123.457 / +1.234568e+002（6 分）
+2024.10 分析40：setprecision(5) 按有效数字 → 123.46，setw(10) 左补 4 个空格；setfill('*') setw(8) → **123_Hi；showpos → cnt=+3（6 分）
 
 ### 考点44：标志字与 setf/setiosflags
 
@@ -1358,7 +1361,7 @@ meta: level=S; freq=2023.04~2025.10 全部 6 套
 
 ### 考点48：文本文件读写
 
-meta: level=A; freq=2023.04、2023.10、2024.04、2025.04、2025.10
+meta: level=A; freq=2023.04、2023.10、2024.04、2024.10、2025.04、2025.10
 
 #### 48.1 必背（读写方式）
 
@@ -1386,6 +1389,7 @@ fin.get(ch);  fout.put(ch);        // 逐字符
 2025.04 设计42：score.txt 读学号姓名成绩显示（10 分）
 2023.10 设计47：读 data.txt 排序写 res.txt（10 分）
 2025.10 设计32：file1.txt→file2.txt 复制并显示、打开失败提示（10 分）
+2024.10 设计41：c 盘 score.txt 读姓名+总成绩 → 显示 → 成绩降序 sort → 写 out.txt（10 分）
 
 ### 考点49：二进制文件与 read/write
 
@@ -1543,7 +1547,7 @@ virtual void showarea() const = 0;    // 派生类必须全部实现
 // 7) 文件三连
 ifstream fin("a.txt", ios::in);       // 读
 ofstream fout("b.txt", ios::out);     // 写（清空）；追加用 ios::app
-while(!fin.eof()){ fin>>x; ... }  fin.close(); fout.close();
+while(fin>>x){ ... }  fin.close(); fout.close();
 ```
 
 ```f
@@ -1554,6 +1558,13 @@ freopen("a.txt", "r", stdin);
 ```f
 // 9) 类模板类外定义
 template <class T> T TestClass<T>::getData(形参表){ ... }
+```
+
+```f
+// 10) 读入数组 + sort 排序（#include <algorithm>）
+struct Stu { string name; double score; };
+bool cmp(const Stu &x, const Stu &y){ return x.score > y.score; }   // 大于号 = 降序
+sort(s, s + n, cmp);    // 升序可省略 cmp
 ```
 
 ## 高频易错
@@ -1618,7 +1629,7 @@ operator double() 不写返回类型；强制类型转换运算符只能重载�
 
 #### 程序设计·两大题材（2×10=20 分）
 
-【题材一】文件：打开→读（while(!fin.eof())）→处理（排序/统计）→写→关闭。失败判断：`if(!fin){cout<<"打开失败";return 0;}`
+【题材一】文件：打开→读（while(fin>>x) 读取表达式作条件）→处理（排序/统计）→写→关闭。失败判断：`if(!fin){cout<<"打开失败";return 0;}`
 【题材二】继承族：基类（protected 成员+虚函数/纯虚）→ 派生类（初始化列表调基类构造、重写虚函数、新增成员函数 Area/output 等）。
 【新趋势】2025 年起第一小题出现纯基础题（圆周长面积、数组排序 sortA）——保底题，确保拿满。
 

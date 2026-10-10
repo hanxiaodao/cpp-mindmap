@@ -114,4 +114,32 @@ window.MISTAKES = [
     wrong:"第(2)空直接写成了赋值语句 Test::x = 73;——把「类外定义」当成了「赋值」，少了类型和类域限定。两个错因：① 静态数据成员必须「类内声明 + 类外定义」，类外那一行是定义语句，要写 int Test::x = 73;，不能带 static；② 全局作用域只允许出现声明/定义，不允许写表达式语句，所以 Test::x = 73; 放在类外根本无法通过编译。",
     fix:"答案：(1) static int x;  (2) int Test::x = 73;\n为什么输出 85：(1) 类内 static int x; 只是声明，此时不分配内存、也不写初值；(2) 类外 int Test::x = 73; 才是定义并给初值 73（类外定义不再写 static，但要写类型 int 和类域 Test::）。main 里 Test test; 用默认实参 i=5 调构造 → x = i + x = 5 + 73 = 78（是「在已有静态值上累加」，不是覆盖初值）→ test.Getnum() 返回 Test::x + 7 = 78 + 7 = 85。\n配套要点：静态数据成员的「类内声明（写 static，不给初值）+ 类外定义（类型 类名::成员名 = 初值，不写 static）」是一对，漏掉类外定义会报链接错误（undefined reference）；文件作用域只能写定义/声明，不能写赋值、调用等语句；访问时 Test::x 与 test.x 是同一份存储。",
     done:false },
+
+  { exam:"2024年10月", no:"32", type:"程序填空", ch:2, kp:"考点25",
+     q:"以下程序输出数值 2024，请将程序补充完整。",
+     code:"#include <iostream>\nusing namespace std;\nclass INTEGER\n{\npublic:\n    INTEGER(int a) { ____(1)____; }\nprivate:\n    int a;\n    ____(2)____(const INTEGER& obj);\n};\nvoid Print(const INTEGER & obj) { cout<<obj.a; }\nint main()\n{\n    INTEGER obj(2024);\n    Print(obj);\n}",
+     wrong:"第(2)空填了 void Print——把它当成在类里声明一个普通成员函数，漏了 friend。类外的 void Print(const INTEGER & obj) 函数体里写了 cout<<obj.a，而 a 是私有成员：不把 Print 声明成友元，外面的函数无权访问（已编译实测报错 'a' is a private member of 'INTEGER'）。",
+     fix:"答案：(1) this->a = a；(2) friend void Print，即类内写 friend void Print(const INTEGER& obj);（已编译运行验证，输出 2024）。\n① 第(2)空的判断方法：空在类内、形状是 ____(const INTEGER& obj);，而类外有同名函数定义 void Print(const INTEGER&) 且函数体访问了私有成员 a——必须把类外的 Print 声明为友元，空里带上 friend。friend 声明写在 private 段一样生效：友元不是成员函数，不受 public/private 限制。\n② 按错解填 void Print，那行只是声明了一个从未定义、也没人调用的私有成员函数，全局的 Print 依旧不是友元，obj.a 照样编译不过——这题考的就是 friend 三个字母不能丢。\n③ 第(1)空：构造函数参数 a 与成员 a 同名，参数把成员遮住了，a=a 只是参数自己赋给自己，要写 this->a = a 才能存进成员（考点17）。",
+     done:false },
+
+  { exam:"2024年10月", no:"36", type:"程序分析", ch:1, kp:"考点6",
+     q:"阅读程序，填写程序的正确运行结果（共两行）。",
+     code:"#include <iostream>\nusing namespace std;\nvoid setzero(int &a) { a = 0; }\nint main() {\n    int a = 1, b = 2;\n    const int *p = &a;\n    cout << a << ' ' << b << ' ' << *p << endl;\n    setzero(a);\n    setzero(b);\n    cout << a << ' ' << b << ' ' << *p << endl;\n    return 0;\n}",
+     wrong:"第二行写成了 0 0 1——以为指针 p 在定义时把 a 的值 1 保存了下来，a 被 setzero 改成 0 之后 *p 还是 1；没意识到指针存的是地址，*p 跟着 a 变。",
+     fix:"答案：第一行 1 2 1，第二行 0 0 0（已编译实测）。p 里存的是 a 的地址，*p 就是 a 本身，不是定义那一刻拍下的快照：setzero(int &a) 是引用传参（形参是实参的别名），a、b 被改成 0 后 *p 读到的自然是改后的 a。const int *p = &a 只限制「不能通过 p 写」（*p=5 编译错），既不妨碍 a 自己变化，也不会让 p 记住旧值——把指针当成「存值的盒子」是这类题的根子。",
+     done:false },
+
+  { exam:"2024年10月", no:"40", type:"程序分析", ch:7, kp:"考点43",
+     q:"阅读程序，填写程序的正确运行结果（共三行）。",
+     code:"#include <iostream>\n#include <iomanip>\n#include <string>\nusing namespace std;\nint main()\n{\n    double x=123.456;\n    cout<<\"x=\"<<setw(10)<<setprecision(5)<<x<<endl;\n    char str[20]=\"123_Hi\";\n    cout<<\"str=\"<<setfill('*')<<setw(8)<<str<<endl;\n    int i=0,cnt=0;\n    while(str[i])\n    {\n        if(str[i]>='0'&&str[i]<='9') cnt++;\n        i++;\n    }\n    cout.setf(ios::showpos);\n    cout<<\"cnt=\"<<cnt;\n}",
+     wrong:"第一行 x 的对齐空格写少了——按 123.456 原样 7 个字符去补空格，漏了 setprecision(5) 在默认格式下是「5 位有效数字」：123.456 输出成 123.46 只有 6 个字符，setw(10) 应左补 4 个空格。",
+     fix:"三行输出（已编译实测，␣ 代表空格）：\nx=␣␣␣␣123.46\nstr=**123_Hi\ncnt=+3\n① 第一行：默认（非 fixed）格式下 setprecision(n) 是 n 位有效数字，123.456 → 123.46（6 个字符）；setw(10) 只对紧跟的下一项 x 生效，默认右对齐，左补 10-6=4 个空格。先确定输出内容是什么，再数字符补空格。\n② 第二行：123_Hi 共 6 个字符，setw(8) 差 2 位用 setfill('*') 补在左边 → **123_Hi。\n③ while(str[i]) 逐字符扫到字符串结尾符为止，数字字符只有 '1''2''3'，cnt=3；setf(ios::showpos) 让正数带 + 号 → cnt=+3（showpos 只对数字生效，不影响字符串）。",
+     done:false },
+
+  { exam:"2024年10月", no:"41", type:"程序设计", ch:8, kp:"考点48",
+     q:"读取 c 盘根目录 score.txt 文件中的数据（数据为学生的姓名和总成绩），在屏幕上显示这些排序前的数据，按学生成绩由高到低的顺序排序后，将结果存放在当前文件夹名为 out.txt 的文件中。",
+     code:"#include <iostream>\n#include <fstream>\n#include <string>\n#include <algorithm>\nusing namespace std;\nstruct Stu { string name; double score; };\nbool cmp(const Stu &x, const Stu &y) { return x.score > y.score; }   // 成绩高在前：降序\nint main()\n{\n    Stu s[100];\n    int n = 0;\n    ifstream fin(\"c:\\\\score.txt\");   // ← 读取（本题的错误点）\n    if (!fin) { cout << \"打开 score.txt 失败\" << endl; return 0; }\n    while (fin >> s[n].name >> s[n].score)   // 全部读进数组再处理\n        n++;\n    fin.close();\n    for (int i = 0; i < n; i++)              // 显示排序前的数据\n        cout << s[i].name << \" \" << s[i].score << endl;\n    sort(s, s + n, cmp);\n    ofstream fout(\"out.txt\");\n    for (int i = 0; i < n; i++)\n        fout << s[i].name << \" \" << s[i].score << endl;\n    fout.close();\n    return 0;\n}",
+     wrong:"读取部分写的不对——没有用 while(fin >> 姓名 >> 成绩) 把每条记录完整读进数组（边读边丢、或读完不存，后面就没法显示和排序）；排序也没有用 algorithm 头文件里的 sort，手写排序费时又容易错",
+     fix:"参考答案见上方代码（已编译运行验证：score.txt 为 zhangsan 89 / wangwu 95 / lisi 72 / zhaoliu 63 时，屏幕按原顺序显示 4 条，out.txt 为 wangwu 95 / zhangsan 89 / lisi 72 / zhaoliu 63）。\n① 读取和 2025.04 设计42 同一个考点48 套路：姓名、成绩都是空白分隔的词，用 while(fin >> s[n].name >> s[n].score) n++; 逐条读进结构体数组，读取表达式作循环条件，读到文件尾自动停；打开后先 if(!fin) 判失败。\n② 题目要「显示排序前的数据」，所以必须先把 n 条全部读进数组再显示——四步分开：读 → 显示 → 排序 → 写，不能边读边往 out.txt 写。\n③ 排序用 algorithm 头文件的 sort 最省事：比较函数 bool cmp(const Stu &x, const Stu &y) { return x.score > y.score; }（大于号 = 从高到低），调用 sort(s, s+n, cmp)。不想用 sort 就手写冒泡，注意 name、score 两列要一起换（参考 2025.10 设计31 的 sortA）。\n④ c 盘路径在源码里写成 \"c:\\\\score.txt\"（反斜杠双写）；结果写当前文件夹的 out.txt，写完 close()。",
+     done:false },
 ];
