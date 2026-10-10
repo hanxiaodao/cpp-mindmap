@@ -1084,7 +1084,7 @@ int operator+(A &amp;a1, A &amp;a2);
 Complex operator*(const Complex &amp;c);   // 成员版乘法（2025.10 分析27）</span>
 <ul><li>优先写成<b>成员函数</b>；要支持"实数+复数"这类混合运算时用<b>友元</b>。</li></ul>
 28.2 怎么算（追踪模型）<br>
-<ul><li>见到 `a1 + a2` 配非成员 operator+ 且类有 `get(){return m_a++;}`：先算 a1.get()（值 m_a 自增 1），再算 a2.get()，再代入表达式（2024.10 分析38：10000+100-14=10086，下一句 a2 再 get 已是 101 → 88）。</li><li>见到 `c = a - b`：c 是"返回的临时对象"，按构造参数算分量（2023.10 分析45：c=1+8i）。</li><li>`==` 重载返回 int（1/0），常配合三目输出"相等/不相等"。</li></ul>
+<ul><li>见到 `a1 + a2` 配非成员 operator+ 且类有 `get(){return m_a++;}`：先算 a1.get()（值 m_a 自增 1），再算 a2.get()，再代入表达式（2024.10 分析38：10000+100-14=10086，下一句 a2 再 get 已是 101 → 88）。</li><li><b>同一对象第二次 get() 返回值已 +1</b>：给每个对象的 m_a 单独记一本账（2024.04 程序填空40：a1(888)+a2(135)-15=1008 后，第二句 a1+a3=889+9-15=883，a1.get() 返回的是 889 不是 888；a3=9 走类型转换构造）。</li><li>见到 `c = a - b`：c 是"返回的临时对象"，按构造参数算分量（2023.10 分析45：c=1+8i）。</li><li>`==` 重载返回 int（1/0），常配合三目输出"相等/不相等"。</li></ul>
 28.3 真题<br>
 2023.10 分析45：Complex operator- 输出 a=2+9i / b=1+1i / c=1+8i（6 分）<br>
 2025.10 分析27：Complex operator* 输出 (2.2,4.4) / (1.1,2.2)（6 分）<br>
@@ -1153,7 +1153,7 @@ class DerivedC : public BaseA, BaseB { ... };       // 多重继承，BaseB 默�
 <div class="kp">
 <div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点34</span><span class="kp-name">派生类的构造与析构</span><span class="kp-level lv-S">S</span><span class="kp-freq">2023.04、2023.10、2024.04、2024.10、2025.10、2026.04</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">34.1 必背（顺序）<br>
-<ul><li>构造顺序：<b>基类（按继承声明顺序）→ 成员对象 → 派生类自身</b>；析构<b>完全相反</b>（2023.10 单选15：A→B→C 构造，析构 C→B→A）。</li><li><b>构造/析构函数不被继承</b>（2023.10 单选12）。</li><li>基类只有带参构造时，<b>派生类必须定义构造函数</b>并在初始化列表里调基类构造（2025.10 程序填空23：B(int n):A(n/2)）。</li><li>派生类构造/析构体为空 `B(){}` `~B(){}` 时，基类构造/析构仍会自动调用（2024.04 程序填空39：输出 2024年/自学考试）。</li><li>派生类对象的初始化由<b>基类和派生类的构造函数共同实现</b>（2023.04 填空28）。</li></ul>
+<ul><li>构造顺序：<b>基类（按继承声明顺序）→ 成员对象 → 派生类自身</b>；析构<b>完全相反</b>（2023.10 单选15：A→B→C 构造，析构 C→B→A）。</li><li><b>构造/析构函数不被继承</b>（2023.10 单选12）。</li><li>基类只有带参构造时，<b>派生类必须定义构造函数</b>并在初始化列表里调基类构造（2025.10 程序填空23：B(int n):A(n/2)）。</li><li>派生类构造/析构体为空 `B(){}` `~B(){}` 时，基类构造/析构仍会自动调用（2024.04 程序填空39：B(){} ~B(){} 空体也输出 2024年 / 自学考试；补空版本 B() 里 cout&lt;&lt;"4月"&lt;&lt;endl、~B() 里 cout&lt;&lt;"C++程序设计"，输出 2024年4月 / C++程序设计自学考试——B 里不需要写 A(); ~A();，基类版本编译器隐式调用）。</li><li>派生类对象的初始化由<b>基类和派生类的构造函数共同实现</b>（2023.04 填空28）。</li></ul>
 34.2 怎么算（固定大题模型：构造析构顺序输出）<br>
 <span class="formula">Person→Student→Teacher 全空体构造析构：
 输出 Constructor of Person / Constructor of Student / Constructor of Person / Destructor of Teacher
