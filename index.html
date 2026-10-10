@@ -1305,9 +1305,11 @@ cout &lt;&lt; resetiosflags(ios::left);        // 清除标志</span>
 fout &lt;&lt; name &lt;&lt; " " &lt;&lt; score &lt;&lt; endl;
 ifstream fin("a.txt");             // 读文本
 fin &gt;&gt; a &gt;&gt; b;                     // 按空白分隔提取
-while(!fin.eof()) { fin.getline(buf,80); ... }   // 逐行读到 EOF
+while (fin &gt;&gt; a &gt;&gt; b) { ... }      // 按数据项读到 EOF（条件用读取表达式）
+while (fin.getline(buf,80)) {...}  // 逐行读到 EOF
 fin.get(ch);  fout.put(ch);        // 逐字符</span>
-<ul><li>文本文件是<b>无结构字节流</b>，Windows 下文本方式读写会做 `\r\n` ↔ `\n` 转换。</li><li>逐行读用 `fin.getline(buf, n)`；按数据项读用 `fin &gt;&gt; x`；循环判断用 `!fin.eof()`。</li><li>读一行加行号写出（2023.04 设计46）、读成绩排序写回（2024.10 设计41）都走这条路径。</li></ul>
+<ul><li>文本文件是<b>无结构字节流</b>，Windows 下文本方式读写会做 `\r\n` ↔ `\n` 转换。</li><li>逐行读用 `fin.getline(buf, n)`；按数据项读用 `fin &gt;&gt; x`；循环条件<b>直接用读取表达式</b> `while (fin &gt;&gt; a &gt;&gt; b)` 或 `while (fin.getline(buf,n))`，不要用 `!fin.eof()`。</li><li>读一行加行号写出（2023.04 设计46）、读成绩排序写回（2024.10 设计41）都走这条路径。</li></ul>
+<span class="callout err">「读到哪里结束」的判断是考点48 最容易错的地方：while (fin &gt;&gt; x) 的读取表达式本身作条件，读成功为真、读失败（到文件尾）为假，循环自然结束。改成 while(!fin.eof()) { fin &gt;&gt; a &gt;&gt; b; 输出; } 一定多输出一遍最后一条记录——eof 是"上一次读取失败之后"才置位的标志，读完最后一条时它还是 false，循环会再进一次，这次读取失败但变量里仍留着上一条的值（sentry 失败时操作数不被修改），于是最后一条记录输出两遍。逗号误写 while (fin &gt;&gt; a, b, c) 只把最后一个操作数当条件，前面的读取被丢弃，常导致死循环；字段顺序也要和文件中的列一一对应，写反了整行串位。</span>
 48.2 真题<br>
 2023.04 设计46：读 dev1.cpp 加行号写 dev2.txt（5 分）<br>
 2025.04 设计42：score.txt 读学号姓名成绩显示（10 分）<br>
