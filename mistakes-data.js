@@ -161,5 +161,12 @@ window.MISTAKES = [
     code:"#include <iostream>\nusing namespace std;\nclass A {\npublic:\n    A(int a = 135) { m_a = a; }\n    int get() { return m_a++; }   // 返回当前值，再自增\nprivate:\n    int m_a;\n};\nint (1) { return a1.get() + a2.get() - 15; }\nint main() {\n    A a1(888), a2, a3 = 9;\n    cout << \"输出1:\" << a1 + a2 << endl;\n    (2) ;\n}",
     wrong:"第二行数字算错了——没追踪 get() 的自增副作用：第一行 a1.get() 已经把 a1 的 m_a 从 888 加到 889，第二行再调 a1.get() 返回的是 889 不是 888；a3 = 9 是类型转换构造（m_a=9）也容易看漏。",
     fix:"答案：(1) operator+(A &a1, A &a2)——补在 int 后面作函数头，非成员/友元形式 2 个参数；(2) cout << \"输出2:\" << a1 + a3 << endl;\n逐行追踪（get() 先返回旧值再 m_a++，给每个对象单独记账）：\n① 对象初值：a1.m_a=888；a2 用默认参数 → m_a=135；a3 = 9 走类型转换构造 → m_a=9（考点20）。\n② 输出1：a1+a2 → a1.get() 返 888（a1→889）+ a2.get() 返 135（a2→136）- 15 = 1008 ✓。\n③ 输出2：a1+a3 → a1.get() 这次返回 889（不是 888！第一次调用已经把它加过 1，a1→890）+ a3.get() 返 9（a3→10）- 15 = 883 ✓（写成 a3 + a1 同样是 883）。\n④ 记账口诀：m_a++ 是「先给值后自增」，同一对象每 get() 一次，下次返回值就大 1；算追踪题时在草稿上列一行 m_a 值，每调一次 get 划掉旧的写上新的，第二行就不会算错。",
+     done:false },
+
+  { exam:"2024年4月", no:"46", type:"程序设计", ch:8, kp:"考点49",
+    q:"编写程序将 C 盘文件 f1.txt 内容复制到 D 盘文件 f2.txt。要求：文件的读写使用函数 read、write，且每次读写一个字符。",
+    code:"#include <iostream>\n#include <fstream>\nusing namespace std;\nint main()\n{\n    char ch;                                  // 1 字节缓冲区\n    ifstream fin(\"c:\\\\f1.txt\", ios::in | ios::binary);\n    ofstream fout(\"d:\\\\f2.txt\", ios::out | ios::binary);\n    if (!fin) { cout << \"打开 f1.txt 失败\" << endl; return 0; }\n    while (fin.read(&ch, 1))   // read 返回流引用：读到文件尾自动变假\n        fout.write(&ch, 1);\n    fin.close();\n    fout.close();\n    return 0;\n}",
+    wrong:"不知道 read、write 两个函数的用法——原型没背住：不知道第一参数要传「缓冲区地址」、第二参数是「字节数」，单字符读写时想不到用 &ch 取地址，也不知道 read 的返回值可以直接当循环条件。",
+    fix:"标准写法见上方代码（已编译运行验证：f1.txt 为 C++\\r\\n2026 时，f2.txt 与其逐字节一致）。\n① 两个函数原型（必须背）：istream& read(char *pch, int n); / ostream& write(const char *pch, int n);——第一参数是缓冲区的「地址」，第二参数是搬运的「字节数」。考点49 的核心记忆点：write 是「向输出流插入字节序列」（2025.10 单选17 原题）。\n② 每次读写一个字符 = 准备一个 char 变量 ch 作 1 字节缓冲区，read/write 都要地址，所以写 &ch：fin.read(&ch, 1) 从文件读 1 字节进 ch，fout.write(&ch, 1) 把 ch 的 1 字节写出。\n③ 循环条件直接用读取表达式 while(fin.read(&ch,1))：read 返回 istream& 流对象引用，读成功流为真、读到文件尾流为假，循环自动结束——和 while(fin>>x) 同一个套路（考点48），不多读也不漏读。\n④ 二进制方式打开 ios::binary：read/write 按字节原样搬运、不做换行转换（文本方式才对 \\n 做转换）；打开失败判 if(!fin)；C 盘 D 盘路径反斜杠双写 \"c:\\\\f1.txt\"、\"d:\\\\f2.txt\"。\n⑤ 进阶记法：整块/对象复制用 fout.write((char*)&obj, sizeof(obj))，实际读到的字节数用 fin.gcount() 查；逐字符文本复制则优先 get/put（fout.put(ch)），本题点名 read/write 才用 read(&ch,1)。",
     done:false },
 ];

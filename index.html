@@ -1373,7 +1373,7 @@ fin.get(ch);  fout.put(ch);        // 逐字符</span>
 <span class="formula">ostream&amp; write(const char *pch, int nCount);   // 输出字节序列（2025.10 单选17）
 istream&amp; read(char *pch, int nCount);
 int gcount();                                   // 上次读到的字节数</span>
-<ul><li>二进制方式打开：`ios::out | ios::binary`（2024.04 单选18）；模式参数解释题：第 1 参是文件名、第 2 参是打开模式（2024.10 单选18）。</li><li>write/read 按<b>字节</b>搬运，不做格式转换；对象可直接整体写入 `fout.write((char*)&amp;obj, sizeof(obj))`。</li><li><b>文本 vs 二进制差异</b>：文本方式对换行做转换，二进制方式原样搬运。</li><li>使用文件的一般步骤：<b>打开 → 读写 → 关闭</b>（2024.10 单选17：使用流类完成打开、读、写、关闭）。</li></ul>
+<ul><li>二进制方式打开：`ios::out | ios::binary`（2024.04 单选18）；模式参数解释题：第 1 参是文件名、第 2 参是打开模式（2024.10 单选18）。</li><li>write/read 按<b>字节</b>搬运，不做格式转换；对象可直接整体写入 `fout.write((char*)&amp;obj, sizeof(obj))`。</li><li><b>逐字符 read/write 复制模板</b>（2024.04 设计46）：`char ch; while(fin.read(&amp;ch,1)) fout.write(&amp;ch,1);`——read 要 char* 地址所以写 `&amp;ch`；read 返回流引用可直接作循环条件，读到文件尾自动停；打开后先 `if(!fin)` 判失败，路径反斜杠双写。</li><li><b>文本 vs 二进制差异</b>：文本方式对换行做转换，二进制方式原样搬运。</li><li>使用文件的一般步骤：<b>打开 → 读写 → 关闭</b>（2024.10 单选17：使用流类完成打开、读、写、关闭）。</li></ul>
 49.2 真题<br>
 2025.10 第17题：向输出流插入字节序列的函数是 ostream&amp; write(const char*,int)<br>
 2024.04 设计46：f1.txt→f2.txt 逐字符 read/write 复制（5 分）<br>
