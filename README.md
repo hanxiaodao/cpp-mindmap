@@ -5,9 +5,9 @@
 ## 结构
 
 ```
-├── exam-notes.md        # 唯一内容源：考点笔记（55 考点 / 9 章）
-├── index.html           # 思维导图页面（由 render.py 从 exam-notes.md 生成，勿手改）
-├── render.py            # exam-notes.md → index.html 渲染器
+├── exam-notes.md        # 唯一内容源：考点笔记（58 考点 / 9 章）
+├── index.html           # 思维导图页面（由 skill 的 render_notes.py 从 exam-notes.md 生成，勿手改）
+├── render.py            # 旧版渲染器（已被 .agents/skills/exam-note-distiller/scripts/render_notes.py 取代）
 ├── mistakes-data.js     # 错题集数据（AI 维护，追加条目即可）
 ├── mistakes.html        # 错题集页面（读取 mistakes-data.js 渲染）
 ├── distill/             # 真题蒸馏中间产物（考点聚类、覆盖度）
@@ -18,7 +18,7 @@
 ## 更新方式
 
 1. 改内容：考点改 `exam-notes.md`，错题追加到 `mistakes-data.js`
-2. 重新生成页面：`python render.py`（只影响 `index.html`）
+2. 重新生成页面：`python .agents/skills/exam-note-distiller/scripts/render_notes.py`（只影响 `index.html`）
 3. `git add . && git commit -m "..." && git push` → Pages 自动上线
 
 ## 错题集怎么用
@@ -49,5 +49,5 @@
 
 ## 素材与蒸馏
 
-`真题/` 是 2023.04–2025.10 六套 PDF；`distill/` 是逐题反推的考点聚类（`topics.md`）、
+`真题/` 是 2023.04–2026.04 七套 PDF；`distill/` 是逐题反推的考点聚类（`topics.md`）、
 试卷结构（`papers.md`）、覆盖度核查（`coverage.md`）。改考点前先看 `distill/`。
