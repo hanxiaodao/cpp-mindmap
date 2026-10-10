@@ -1309,7 +1309,7 @@ meta: level=S; freq=2023.04~2025.10 全部 6 套、2026.04 缺席（6/7 套）
 | setfill(c) / fill(c) | 填充字符 | 配合 setw 用 |
 | setprecision(n) / precision(n) | 默认=**n 位有效数字**；配 fixed/scientific 后=**小数位数** | 1.234567 配 3 → 1.23 |
 | fixed / scientific | 定点 / 科学计数法（2025.04 单选17） | scientific 输出 1.045600e+001 |
-| hex / oct / dec / setbase(n) | 进制 | 需清 basefield 再切换 |
+| hex / oct / dec / setbase(n) | 进制 | 切换要 setf(新进制, ios::basefield)，见考点44 |
 | showpos | 正数前加 + | cnt=+3（2024.10 分析40） |
 | showbase / showpoint / uppercase | 显示进制前缀/小数点/大写 | |
 | left / right / internal | 对齐（2025.04 分析40） | 默认右对齐 |
@@ -1324,7 +1324,7 @@ meta: level=S; freq=2023.04~2025.10 全部 6 套、2026.04 缺席（6/7 套）
 
 ```f
 cout<<setfill('*')<<setw(8)<<234;          →  *****234
-cout<<setw(8)<<setprecision(3)<<1.234567;  →  ####1.23    （2023.04 分析45）
+cout<<setw(8)<<setprecision(3)<<1.234567;  →  ␣␣␣␣1.23  （默认空格填充；2023.04 分析45 里因上一行 setfill('*') 仍生效，第4行输出 ****1.23——setfill 持久，不重新设就沿用）
 cout.width(10); cout.fill('#'); cout<<10.456;  →  ####10.456
 cout<<showpos<<cnt;                        →  cnt=+3      （2024.10 分析40）
 cout.width(4); cout.fill('#'); cout<<setiosflags(ios::right)<<123;   →  #123
@@ -1352,6 +1352,9 @@ cout << resetiosflags(ios::left);        // 清除标志
 ```
 
 - **三大互斥域**：**basefield（dec|oct|hex）、adjustfield（left|right|internal）、floatfield（scientific|fixed）**。
+- **标志字是什么**：每个流对象内部有一组格式开关位，`ios::xxx` 就是这些开关的常量名——`ios::dec` 十进制、`ios::oct` 八进制、`ios::hex` 十六进制、`ios::left/right` 对齐、`ios::scientific` 科学计数法……而 **`ios::basefield` 不是开关，是「域掩码」**：它等于 dec|oct|hex 三个开关的合并，用来一次性圈住整个进制域；同理 adjustfield 圈对齐域、floatfield 圈浮点域。
+- **setf 两参数形式 `setf(新标志, 域掩码)` 的意思**：先把域掩码圈住的旧开关**全部清零**，再打开新开关——保证同域互斥的标志只剩一个。`cout.setf(ios::dec, ios::basefield)` 读作「进制域清零后设为十进制」，`setf(ios::hex, ios::basefield)` 就是「清掉 dec/oct 残留、切到十六进制」（2023.10 单选17）。**单参数 `setf(标志)` 只置 1 不清 0**，同域旧标志还挂着，dec|hex 同置后进制不可靠——所以进制/对齐/浮点域切换必须用两参数形式。
+- 2023.04 分析45 首句 `cout.setf(ios::dec,ios::basefield)`：默认本来就是十进制，这句是「保险动作」，输出仍是 234，认识写法即可。
 - 常见标志字：skipws、dec/oct/hex、showbase、showpoint、uppercase、showpos、scientific、fixed、unitbuf。
 - setiosflags/resetiosflags 作用**持久**；setw/width **一次有效**（教材表 7-6 口径）。
 - `setiosflags(ios::resetiosflags)` 是错误用法——resetiosflags 是独立操纵符不是标志字（2025.10 单选16）；教材习题答案中 `setiosflags(ios::hex)` 是合法用法。

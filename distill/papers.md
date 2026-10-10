@@ -88,7 +88,7 @@
 | 42 | 构造析构顺序+new对象数组 | 1constructor 2constructor pd[0]=1,pd[1]=2 2destructor 1destructor | delete[] 逆序析构 |
 | 43 | 重载--与=链式赋值 | 9,8,7 / 0,0,0 / 0,0,0 / 4,3,2 / 3,3,3 / 4,3,2 | 追踪 --a 与 c=b=a |
 | 44 | 虚函数与非虚函数静态绑定 | Student::rest / Person::study / Student::rest | study 非虚经基类指针仍调基类版本 |
-| 45 | 流格式控制/put | *****234 / 1.23457 / ####1.23（setw8 精度3） / c | setprecision 默认=有效位 |
+| 45 | 流格式控制/put | 234 / *****234ok / 1.23457 / ****1.23（setw8 精度3，fill 仍为上行的 *） / cout.put(c): / c | setprecision 默认=有效位；已编译实测勘误：旧记 ####1.23 有误——原题未设 setfill('#')，setfill('*') 持久生效 |
 
 ### 五、程序设计题（5+10）
 

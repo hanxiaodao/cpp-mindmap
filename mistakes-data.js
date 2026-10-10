@@ -183,4 +183,11 @@ window.MISTAKES = [
     wrong:"不知道怎么读取一整行的——只熟悉 fin >> 按空白分隔提取，而 >> 会把一行代码按空格/制表符切碎、丢掉所有空白缩进，根本没法按行处理；getline 的用法（参数含义、返回值怎么当循环条件）没掌握",
     fix:"参考答案见上方代码（已编译运行验证：dev1.cpp 为 7 行 C++ 源码时，dev2.txt 逐行为 1: #include <iostream> … 7: }，行号与原行内容一一对应）。\n① 读一整行用 fin.getline(buf, 80)：两个参数——buf 是存行的字符数组、80 表示最多读入 79 个字符（自动补 '\\0'）；遇到 '\\n' 停止，并把换行符从流中取走丢弃，所以 buf 里是纯行内容，下一轮自动接下一行。用 >> 读不了整行：>> 以空白为分隔符，一行代码会被拆成多个数据项且缩进全丢。\n② 循环条件直接写 while(fin.getline(buf, 80))：getline 返回 istream& 流引用，读成功为真、读到文件尾（一行都没读到）为假，循环自动结束——和 while(fin>>x)（考点48）、while(fin.read(&ch,1))（考点49）同一个套路，不要写 !fin.eof()。\n③ 行号在循环里自增再连同行内容写出：fout << line << \": \" << buf << endl;——题目没规定行号格式，\"1: 代码\"、\"1 代码\"、\"1,代码\" 都算加上了行号。\n④ 打开失败判 if(!fin)（考点48 固定套路）；文件在「当前文件夹」下，直接写文件名 \"dev1.cpp\"，不用带路径（带路径才要反斜杠双写）。", 
     done:false },
+
+  { exam:"2023年4月", no:"45", type:"程序分析", ch:7, kp:"考点43",
+    q:"阅读程序，写出运行结果（setf 设置进制 + setfill/setw/setprecision + put）",
+    code:"#include <iostream>\n#include <iomanip>\nusing namespace std;\nint main()\n{\n    int a=234;\n    cout.setf(ios::dec,ios::basefield);\n    cout<<a<<endl;\n    cout<<setfill('*')<<setw(8)<<a<<\"ok\"<<endl;\n    double b=1.234567;\n    cout<<b<<endl;\n    cout<<setw(8)<<setprecision(3)<<b<<endl;\n    char c='a';\n    cout<<\"cout.put(c):\"<<endl;\n    cout.put(c+2);\n    return 0;\n}",
+    wrong:"不知道 cout.setf(ios::dec, ios::basefield) 是什么意思——ios::dec、ios::basefield 各代表什么、为什么要带第二个参数，完全没概念；另外以为 setw 前没有重新 setfill，第 4 行的填充符就不是 * 了（或想当然换成别的字符）",
+    fix:"6 行输出（已编译实测）：\n234\n*****234ok\n1.23457\n****1.23\ncout.put(c):\nc\n① setf(标志, 域掩码) 两参数形式：第一个参数是要设置的标志字，第二个是「互斥域掩码」——先把掩码圈住的域内旧标志全部清零，再设新标志。ios::dec=十进制标志；ios::basefield 不是开关，是进制域掩码（=dec|oct|hex 合并）。整句读作「进制域清零、设为十进制」。dec/oct/hex 同域互斥，切换必须带掩码（2023.10 单选17：setf(ios::hex, ios::basefield)，见考点44）；本题默认本就是十进制，这句只是保险动作，输出仍是 234。\n② 第2行 setfill('*')<<setw(8)<<a<<\"ok\"：setw 只管随后一项，a=234 右对齐补 5 个 * → *****234，\"ok\" 紧跟其后 → *****234ok。\n③ 第3行默认精度 6 位有效 → 1.23457；第4行 setprecision(3) → 1.23，setw(8) 补 4 个填充符——setfill 是持久设置，这里仍是上一行的 '*' → ****1.23（不是空格，也不是别的字符，别被「没重新 setfill」骗了）。\n④ 末两行：先输出 cout.put(c): 并换行；put 是 cout 成员函数逐字符输出，put(c+2) 中 c+2 按整数算出 99 再转成字符 → 输出 c。",
+    done:false },
 ];
