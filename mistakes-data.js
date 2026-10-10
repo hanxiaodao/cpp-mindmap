@@ -142,4 +142,10 @@ window.MISTAKES = [
      wrong:"读取部分写的不对——没有用 while(fin >> 姓名 >> 成绩) 把每条记录完整读进数组（边读边丢、或读完不存，后面就没法显示和排序）；排序也没有用 algorithm 头文件里的 sort，手写排序费时又容易错",
      fix:"参考答案见上方代码（已编译运行验证：score.txt 为 zhangsan 89 / wangwu 95 / lisi 72 / zhaoliu 63 时，屏幕按原顺序显示 4 条，out.txt 为 wangwu 95 / zhangsan 89 / lisi 72 / zhaoliu 63）。\n① 读取和 2025.04 设计42 同一个考点48 套路：姓名、成绩都是空白分隔的词，用 while(fin >> s[n].name >> s[n].score) n++; 逐条读进结构体数组，读取表达式作循环条件，读到文件尾自动停；打开后先 if(!fin) 判失败。\n② 题目要「显示排序前的数据」，所以必须先把 n 条全部读进数组再显示——四步分开：读 → 显示 → 排序 → 写，不能边读边往 out.txt 写。\n③ 排序用 algorithm 头文件的 sort 最省事：比较函数 bool cmp(const Stu &x, const Stu &y) { return x.score > y.score; }（大于号 = 从高到低），调用 sort(s, s+n, cmp)。不想用 sort 就手写冒泡，注意 name、score 两列要一起换（参考 2025.10 设计31 的 sortA）。\n④ c 盘路径在源码里写成 \"c:\\\\score.txt\"（反斜杠双写）；结果写当前文件夹的 out.txt，写完 close()。",
      done:false },
+
+  { exam:"2026年4月", no:"12", type:"填空", ch:2, kp:"考点14",
+    q:"定义类时，默认的成员访问权限是______。",
+    wrong:"写了 protected——把「有哪三种访问权限」和「不写修饰符时默认归哪档」混在一起了：protected 只是三种权限之一，class 定义成员时不写访问修饰符，默认是 private。",
+    fix:"答案：private。\n① 一对默认值对照记：class 默认 private，struct 默认 public——这是 class 和 struct 唯一的语法差别。\n② 别和「继承的默认方式」混淆（本题最容易踩的坑）：class 派生时不写继承方式，默认也是 private 继承（考点33）——「成员默认 private」+「继承默认 private」两个一起记，protected 永远不会是默认值。\n③ 三种权限的边界要分清：public 谁都能访问；private 只有类内和友元能访问；protected 是「类内 + 友元 + 派生类」能访问、外界不能——它常考在继承里（基类 protected 成员公有继承后在派生类仍是 protected，2026.04 单选8），不是默认权限。\n④ 配套考法：2026.04 单选3 同卷考了「私有成员类外不能直接访问」（公有成员函数接口或友元才碰得到）。",
+    done:false },
 ];
