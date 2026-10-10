@@ -752,10 +752,11 @@ cout &lt;&lt; ns::x;                       // 作用域运算符限定访问</sp
 2025.04 设计41：输入半径算圆周长面积，pi 用常量定义（10 分基础保底题；周长 2πr、面积 πr²）<br></div>
 </div>
 <div class="kp">
-<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点7</span><span class="kp-name">引用与传参</span><span class="kp-level lv-C">C</span><span class="kp-freq">2023.10、2024.10、2025.10、2026.04</span><span class="kp-arrow">▼</span></div>
+<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点7</span><span class="kp-name">引用与传参</span><span class="kp-level lv-C">C</span><span class="kp-freq">2023.10、2024.04、2024.10、2025.10、2026.04</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">7.1 核心规则<br>
-<ul><li>引用的本质是变量的<b>别名</b>，格式 `类型 &amp;引用名 = 变量名;`。</li><li>引用<b>必须初始化</b>，且不能用常量、表达式初始化非常量引用（`int &amp;r = 5;` 错，`const int &amp;r = 5;` 可以）。</li><li>引用<b>不能更换指向</b>、<b>不能为空</b>——绑定后全程只指向同一变量（2026.04 单选2）。</li><li><b>传值</b>：形参是副本，改形参不动实参；<b>传引用</b>：形参是别名，改形参就是改实参（2024.10 分析36 的 setzero(int &amp;a)）。</li><li>引用作函数返回值：函数返回的是原变量的别名，可作<b>左值</b>继续赋值。</li><li>指针传参要传地址：对象 `v1` 要写 `&amp;v1`，数组名 `v2` 本身就是地址（2023.10 单选3：f1(&amp;v1,v2)）。</li></ul>
+<ul><li>引用的本质是变量的<b>别名</b>，格式 `类型 &amp;引用名 = 变量名;`。</li><li>引用<b>必须初始化</b>，且不能用常量、表达式初始化非常量引用（`int &amp;r = 5;` 错，`const int &amp;r = 5;` 可以）。</li><li>引用<b>不能更换指向</b>、<b>不能为空</b>——绑定后全程只指向同一变量（2026.04 单选2）。</li><li><b>传值</b>：形参是副本，改形参不动实参；<b>传引用</b>：形参是别名，改形参就是改实参（2024.10 分析36 的 setzero(int &amp;a)）。</li><li><b>读出函数要用引用把数据带出去</b>：`void get(string &amp;p, int &amp;a, int &amp;b)` 把对象内数据赋给外部变量——值传递只改副本，"读出"无效（2024.04 设计47 实际错点）。</li><li>引用作函数返回值：函数返回的是原变量的别名，可作<b>左值</b>继续赋值。</li><li>指针传参要传地址：对象 `v1` 要写 `&amp;v1`，数组名 `v2` 本身就是地址（2023.10 单选3：f1(&amp;v1,v2)）。</li></ul>
 7.2 真题<br>
+2024.04 设计47：stud::get(string&amp;,int&amp;,int&amp;) 引用把对象数据读出到外部变量（类设计配引用）<br>
 2026.04 第2题：引用是变量的别名（必须初始化/不能换绑定/不能为空）<br>
 2023.10 第3题：f1(&amp;v1,v2) 正确传参<br>
 2024.10 分析36：引用传参 setzero 改变实参<br>
@@ -879,6 +880,7 @@ oneInt2 = oneDouble;                     // 自动类型转换</span>
 <span class="callout err">"成员函数都应是公有的，数据成员都应是私有的"是错误说法——成员函数也可以是私有的（2024.04 单选3）。</span>
 <span class="callout err">class 默认成员权限是 private，不是 protected；struct 才默认 public。别和继承的默认方式混：class 继承不写方式默认也是 private 继承（考点33）——两个「默认 private」一起记，protected 永远不会是默认值（2026.04 填空12 实际错点）。</span>
 14.3 真题<br>
+2024.04 设计47：stud 类设计（姓名/英语/C++ + 构造/写入/读出/平均/显示），get 用引用把数据带出（10 分）<br>
 2026.04 填空12：class 默认成员访问权限 private<br>
 2026.04 第3题：私有成员类外不能直接访问（"只能通过友元"不对，公有接口亦可）<br>
 2026.04 程序填空21：Rectangle 类补 private:<br>
@@ -1349,7 +1351,7 @@ cout &lt;&lt; resetiosflags(ios::left);        // 清除标志</span>
 2023.10 第19题：ifstream infile("D:\\f1.txt",ios::in) 正确<br></div>
 </div>
 <div class="kp">
-<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点48</span><span class="kp-name">文本文件读写</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.04、2024.10、2025.04、2025.10</span><span class="kp-arrow">▼</span></div>
+<div class="kp-title" role="button" tabindex="0" aria-expanded="false" onclick="toggleKp(this)"><span class="kp-num">考点48</span><span class="kp-name">文本文件读写</span><span class="kp-level lv-A">A</span><span class="kp-freq">2023.04、2023.10、2024.10、2025.04、2025.10（2024.04 设计47 复核改判：写入/读出是成员函数非文件操作，归考点14；2026.04 缺席——5/7 套）</span><span class="kp-arrow">▼</span></div>
 <div class="kp-detail">48.1 必背（读写方式）<br>
 <span class="formula">ofstream fout("b.txt");            // 写文本
 fout &lt;&lt; name &lt;&lt; " " &lt;&lt; score &lt;&lt; endl;
